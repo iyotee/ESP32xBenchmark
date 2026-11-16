@@ -190,14 +190,14 @@
             {
               "name": "sram_write_mib_s",
               "value": 33.46,
-              "observed": 8.4756,
+              "observed": 8.4764,
               "reference": 25.3338,
               "unit": "MiB/s"
             },
             {
               "name": "sram_read_mib_s",
-              "value": 30.88,
-              "observed": 5.8682,
+              "value": 30.89,
+              "observed": 5.8685,
               "reference": 19.0006,
               "unit": "MiB/s"
             },

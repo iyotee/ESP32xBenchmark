@@ -1,14 +1,14 @@
 {
   "schema_version": 1,
   "profile_id": "esp8266-d1-mini-v1",
-  "reference_run_id": "9e4ae7be",
+  "reference_run_id": "9e4ae45b",
   "reference_run_ids": [
-    "9e4ae7be",
-    "3df1206d",
-    "dd974304"
+    "9e4ae45b",
+    "3dfc194a",
+    "ddad4014"
   ],
   "calibration_run_count": 3,
-  "calibrated_at": "2026-11-16T15:32:14Z",
+  "calibrated_at": "2026-11-16T15:55:10Z",
   "comparability_class": "esp8266_wifi",
   "reference_device": {
     "target": "ESP8266EX",
@@ -47,19 +47,19 @@
     },
     "sram_write_mib_s": {
       "category": "memory",
-      "value": 8.4756,
+      "value": 8.4764,
       "unit": "MiB/s",
       "direction": "higher"
     },
     "sram_read_mib_s": {
       "category": "memory",
-      "value": 5.8683,
+      "value": 5.8685,
       "unit": "MiB/s",
       "direction": "higher"
     },
     "allocation_latency_us": {
       "category": "memory",
-      "value": 6.4531,
+      "value": 6.1406,
       "unit": "us/op",
       "direction": "lower"
     },

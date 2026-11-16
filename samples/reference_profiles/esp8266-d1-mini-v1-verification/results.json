@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "run_id": "9b7c218d",
+  "run_id": "7d5e65a5",
   "run_count": 3,
   "device": {
     "target": "ESP8266EX",
@@ -54,48 +54,48 @@
       "type": "metric",
       "category": "memory",
       "name": "sram_write_mib_s",
-      "value": 8.4756,
-      "median": 8.4756,
-      "min": 8.4756,
-      "max": 8.4757,
-      "stdev_pct": 0.08,
+      "value": 8.4764,
+      "median": 8.4764,
+      "min": 8.4764,
+      "max": 8.4764,
+      "stdev_pct": 0.07,
       "unit": "MiB/s",
       "direction": "higher",
       "status": "ok",
       "samples": 15,
-      "within_run_stdev_pct": 0.08,
-      "between_run_stdev_pct": 0.000556187959353991
+      "within_run_stdev_pct": 0.07,
+      "between_run_stdev_pct": 0.0
     },
     {
       "type": "metric",
       "category": "memory",
       "name": "sram_read_mib_s",
-      "value": 5.8682,
-      "median": 5.8682,
-      "min": 5.8682,
-      "max": 5.8682,
-      "stdev_pct": 0.01,
+      "value": 5.8685,
+      "median": 5.8685,
+      "min": 5.8685,
+      "max": 5.8685,
+      "stdev_pct": 0.0,
       "unit": "MiB/s",
       "direction": "higher",
       "status": "ok",
       "samples": 15,
-      "within_run_stdev_pct": 0.01,
+      "within_run_stdev_pct": 0.0,
       "between_run_stdev_pct": 0.0
     },
     {
       "type": "metric",
       "category": "memory",
       "name": "allocation_latency_us",
-      "value": 6.4531,
-      "median": 6.4531,
-      "min": 6.4531,
-      "max": 6.4531,
-      "stdev_pct": 0.23,
+      "value": 6.1406,
+      "median": 6.1406,
+      "min": 6.1406,
+      "max": 6.1406,
+      "stdev_pct": 0.2,
       "unit": "us/op",
       "direction": "lower",
       "status": "ok",
       "samples": 15,
-      "within_run_stdev_pct": 0.23,
+      "within_run_stdev_pct": 0.2,
       "between_run_stdev_pct": 0.0
     },
     {
@@ -106,12 +106,12 @@
       "median": 4.7309,
       "min": 4.7309,
       "max": 4.7309,
-      "stdev_pct": 0.06,
+      "stdev_pct": 0.07,
       "unit": "MiB/s",
       "direction": "higher",
       "status": "ok",
       "samples": 15,
-      "within_run_stdev_pct": 0.06,
+      "within_run_stdev_pct": 0.07,
       "between_run_stdev_pct": 0.0
     },
     {
@@ -154,7 +154,7 @@
       "type": "metric",
       "category": "connectivity",
       "name": "wifi_scan_ms",
-      "value": 2182.919,
+      "value": 2182.507,
       "unit": "ms",
       "direction": "lower",
       "status": "informational",
@@ -243,8 +243,8 @@
   ],
   "run_summaries": [
     {
-      "run_id": "9b7c218d",
-      "captured_at": "2026-11-16T15:34:38Z",
+      "run_id": "7d5e65a5",
+      "captured_at": "2026-11-16T15:55:35Z",
       "metrics": [
         {
           "name": "integer_mix_miter_s",
@@ -256,15 +256,15 @@
         },
         {
           "name": "sram_write_mib_s",
-          "value": 8.4756
+          "value": 8.4764
         },
         {
           "name": "sram_read_mib_s",
-          "value": 5.8682
+          "value": 5.8685
         },
         {
           "name": "allocation_latency_us",
-          "value": 6.4531
+          "value": 6.1406
         },
         {
           "name": "flash_read_mib_s",
@@ -284,7 +284,7 @@
         },
         {
           "name": "wifi_scan_ms",
-          "value": 2182.919
+          "value": 2182.507
         },
         {
           "name": "wifi_visible_networks",
@@ -321,8 +321,8 @@
       ]
     },
     {
-      "run_id": "3b22472e",
-      "captured_at": "2026-11-16T15:35:02Z",
+      "run_id": "1d0f8b53",
+      "captured_at": "2026-11-16T15:55:59Z",
       "metrics": [
         {
           "name": "integer_mix_miter_s",
@@ -334,15 +334,15 @@
         },
         {
           "name": "sram_write_mib_s",
-          "value": 8.4757
+          "value": 8.4764
         },
         {
           "name": "sram_read_mib_s",
-          "value": 5.8682
+          "value": 5.8685
         },
         {
           "name": "allocation_latency_us",
-          "value": 6.4531
+          "value": 6.1406
         },
         {
           "name": "flash_read_mib_s",
@@ -362,7 +362,7 @@
         },
         {
           "name": "wifi_scan_ms",
-          "value": 2182.551
+          "value": 2183.092
         },
         {
           "name": "wifi_visible_networks",
@@ -399,8 +399,8 @@
       ]
     },
     {
-      "run_id": "dac86b9c",
-      "captured_at": "2026-11-16T15:35:26Z",
+      "run_id": "bcc0b304",
+      "captured_at": "2026-11-16T15:56:24Z",
       "metrics": [
         {
           "name": "integer_mix_miter_s",
@@ -412,15 +412,15 @@
         },
         {
           "name": "sram_write_mib_s",
-          "value": 8.4756
+          "value": 8.4764
         },
         {
           "name": "sram_read_mib_s",
-          "value": 5.8682
+          "value": 5.8685
         },
         {
           "name": "allocation_latency_us",
-          "value": 6.4531
+          "value": 6.1406
         },
         {
           "name": "flash_read_mib_s",
@@ -440,11 +440,11 @@
         },
         {
           "name": "wifi_scan_ms",
-          "value": 2182.501
+          "value": 2182.656
         },
         {
           "name": "wifi_visible_networks",
-          "value": 7.0
+          "value": 6.0
         },
         {
           "name": "wifi_tcp_udp_mbit_s",
@@ -477,7 +477,7 @@
       ]
     }
   ],
-  "captured_at": "2026-11-16T15:35:26Z",
+  "captured_at": "2026-11-16T15:56:24Z",
   "host": {
     "collector_version": "0.2.0",
     "python_version": "3.12.10",
@@ -520,22 +520,22 @@
           {
             "name": "sram_write_mib_s",
             "value": 100.0,
-            "observed": 8.4756,
-            "reference": 8.4756,
+            "observed": 8.4764,
+            "reference": 8.4764,
             "unit": "MiB/s"
           },
           {
             "name": "sram_read_mib_s",
             "value": 100.0,
-            "observed": 5.8682,
-            "reference": 5.8683,
+            "observed": 5.8685,
+            "reference": 5.8685,
             "unit": "MiB/s"
           },
           {
             "name": "allocation_latency_us",
             "value": 100.0,
-            "observed": 6.4531,
-            "reference": 6.4531,
+            "observed": 6.1406,
+            "reference": 6.1406,
             "unit": "us/op"
           },
           {

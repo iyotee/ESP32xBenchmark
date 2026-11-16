@@ -10,7 +10,7 @@
 namespace {
 constexpr uint32_t kSampleCount = 5;
 constexpr uint32_t kCpuIterations = 600000;
-constexpr uint32_t kBufferBytes = 8192;
+constexpr uint32_t kBufferBytes = 16384;
 constexpr uint32_t kMemoryPasses = 64;
 constexpr uint32_t kFlashBytes = 65536;
 constexpr uint32_t kFlashBlockBytes = 4096;
