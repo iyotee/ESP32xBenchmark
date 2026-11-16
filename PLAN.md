@@ -31,6 +31,7 @@ Provide reproducible, auditable comparisons across ESP32 families by combining a
 - [x] Include Wi-Fi discovery as informational-only and explicitly skip throughput without a peer.
 - [x] Compile and run on the connected ESP32 Dev Module; retain a real calibration profile and raw result/report.
 - [x] Verify the second physical run scores against the baseline (96.13 index, 58% category-weight coverage).
+- [x] Reflash firmware 0.2.0 and record three complete physical suite repetitions as the published classic-ESP32 calibration profile.
 
 ### Phase 3 — broader hardware coverage
 - [x] Add PlatformIO build environments for ESP32, S2, S3, C3, and C6; verify builds for all five targets.
@@ -50,7 +51,7 @@ Provide reproducible, auditable comparisons across ESP32 families by combining a
 ### Phase 5 — publication and maintenance
 - [x] Add methodology and contribution-facing project documentation.
 - [x] Add host-side unit tests and CI build/test workflow.
-- [ ] Publish the verified implementation to the configured GitHub repository.
+- [x] Publish the verified implementation to the configured GitHub repository.
 - [x] Publish the classic ESP32 calibration run with firmware version, SDK, board, host, and environment metadata.
 
 ## Comparability rules
