@@ -81,6 +81,8 @@ public partial class App : System.Windows.Application
                  {
                      "pack://application:,,,/Assets/logo-header-dark.png",
                      "pack://application:,,,/Assets/logo-header-light.png",
+                     "pack://application:,,,/Assets/logo-header-tile-dark.png",
+                     "pack://application:,,,/Assets/logo-header-tile-light.png",
                      "pack://application:,,,/Assets/app-icon.ico"
                  })
         {

@@ -65,6 +65,32 @@ public sealed class BenchmarkParityTests
     }
 
     [Fact]
+    public void SerialPortCatalogKeepsSystemPortsWhenWindowsMetadataIsUnavailable()
+    {
+        var ports = SerialPortDeviceCatalog.Merge(
+            ["COM10", "COM3", "com3"],
+            []);
+
+        Assert.Equal(["COM3", "COM10"], ports.Select(device => device.PortName));
+        Assert.All(ports, device => Assert.Null(device.DeviceInstanceId));
+    }
+
+    [Fact]
+    public void SerialPortCatalogAddsDeviceMetadataWithoutDroppingSystemPorts()
+    {
+        var ports = SerialPortDeviceCatalog.Merge(
+            ["COM10", "COM3"],
+            [
+                new SerialPortDevice("com3", "USB\\VID_303A&PID_1001"),
+                new SerialPortDevice("COM12", "USB\\VID_1A86&PID_7523")
+            ]);
+
+        Assert.Equal(["COM3", "COM10", "COM12"], ports.Select(device => device.PortName));
+        Assert.Equal("USB\\VID_303A&PID_1001", ports[0].DeviceInstanceId);
+        Assert.Equal("USB\\VID_1A86&PID_7523", ports[2].DeviceInstanceId);
+    }
+
+    [Fact]
     public void DatedReleaseTagsValidateAndCompareByDateThenDailySequence()
     {
         Assert.True(DatedReleaseVersion.TryParseTag("V2026.11.16.1", out var first));

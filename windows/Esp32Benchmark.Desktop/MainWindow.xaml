@@ -23,7 +23,8 @@
                 </Grid.ColumnDefinitions>
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center"
                             MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
-                    <Border Width="38" Height="38" CornerRadius="11" Background="Transparent" Margin="0,0,13,0">
+                    <Border Width="40" Height="40" CornerRadius="12"
+                            Background="{DynamicResource LogoTileBackground}" Margin="0,0,13,0">
                         <Image x:Name="BrandLogo" Width="36" Height="36" Stretch="Uniform"
                                Source="pack://application:,,,/Assets/logo-header-dark.png"
                                AutomationProperties.Name="ESP32xBenchmark" />

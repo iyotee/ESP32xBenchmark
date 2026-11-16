@@ -11,6 +11,7 @@
             <SolidColorBrush x:Key="AppBackground" Color="#0B0B0D" />
             <SolidColorBrush x:Key="SidebarBackground" Color="#101012" />
             <SolidColorBrush x:Key="HeaderBackground" Color="#101012" />
+            <SolidColorBrush x:Key="LogoTileBackground" Color="#252528" />
             <SolidColorBrush x:Key="PanelBackground" Color="#171719" />
             <SolidColorBrush x:Key="PanelAltBackground" Color="#1E1E21" />
             <SolidColorBrush x:Key="PanelBorder" Color="#303034" />

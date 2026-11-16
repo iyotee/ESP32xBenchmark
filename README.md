@@ -4,6 +4,12 @@ ESP32xBenchmark is a reproducible, hardware-measured benchmark suite for ESP32-f
 
 > **This is not a simulated benchmark.** The firmware reports real measurements. Categories that need unavailable hardware or peers are marked skipped and excluded from the score.
 
+## Download for Windows
+
+[**Download for Windows — portable EXE**](https://github.com/iyotee/ESP32xBenchmark/releases/latest/download/ESP32xBenchmark-win-x64.exe)
+
+No installer, Python, or .NET runtime is required.
+
 ## What is measured today
 
 | Category | Measurements | Notes |
@@ -104,6 +110,16 @@ Firmware sources are embedded in the EXE and extracted to a versioned per-user
 cache when no external PlatformIO project folder is selected. Firmware
 build/upload still uses the external PlatformIO CLI and toolchains.
 See [docs/WINDOWS_GUI.md](docs/WINDOWS_GUI.md) for workflows and details.
+
+## Repository layout
+
+- `esp32_benchmark/` — Python CLI and host-side benchmark tools.
+- `platformio_test/` — PlatformIO firmware for supported boards.
+- `windows/` — WPF desktop app, shared C# core, and .NET tests.
+- `samples/` — measured runs, reference profiles, and comparisons.
+- `tests/` — Python CLI tests.
+- `assets/final/` — processed logo, app-icon, and favicon assets.
+- `scripts/` and `docs/` — build/asset tooling and project documentation.
 
 ## Global score
 

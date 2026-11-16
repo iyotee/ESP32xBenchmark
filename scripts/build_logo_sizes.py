@@ -7,7 +7,7 @@ import argparse
 from pathlib import Path
 
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageColor, ImageDraw
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -15,6 +15,7 @@ DEFAULT_SOURCE = ROOT / "assets" / "final" / "logo-master.png"
 DEFAULT_OUTPUT = ROOT / "assets" / "final"
 PNG_SIZES = (16, 32, 48, 64, 128, 256)
 ICO_SIZES = ((16, 16), (24, 24), (32, 32), (48, 48), (64, 64), (128, 128), (256, 256))
+TILE_COLORS = {"dark": "#252528", "light": "#E8E8EA"}
 
 
 def make_light_variant(source: Image.Image) -> Image.Image:
@@ -40,6 +41,32 @@ def render_square(source: Image.Image, size: int, margin: float = 0.08) -> Image
     return canvas
 
 
+def render_tiled_square(
+    source: Image.Image,
+    size: int,
+    tile_color: str,
+    margin: float = 0.11,
+) -> Image.Image:
+    scale = 4
+    scaled_size = size * scale
+    canvas = Image.new("RGBA", (scaled_size, scaled_size), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(canvas)
+    draw.rounded_rectangle(
+        (0, 0, scaled_size - 1, scaled_size - 1),
+        radius=round(scaled_size * 0.22),
+        fill=ImageColor.getcolor(tile_color, "RGBA"),
+    )
+
+    mark = source.convert("RGBA")
+    content_size = round(scaled_size * (1 - 2 * margin))
+    mark.thumbnail((content_size, content_size), Image.Resampling.LANCZOS)
+    canvas.alpha_composite(
+        mark,
+        ((scaled_size - mark.width) // 2, (scaled_size - mark.height) // 2),
+    )
+    return canvas.resize((size, size), Image.Resampling.LANCZOS)
+
+
 def build(source_path: Path, output_directory: Path) -> None:
     if not source_path.is_file():
         raise FileNotFoundError(
@@ -58,6 +85,12 @@ def build(source_path: Path, output_directory: Path) -> None:
             render_square(mark, 256).save(target, format="PNG", optimize=True)
             print(f"Created {target} (256x256)")
 
+            tile_target = output_directory / f"logo-header-tile-{theme}.png"
+            render_tiled_square(mark, 256, TILE_COLORS[theme]).save(
+                tile_target, format="PNG", optimize=True
+            )
+            print(f"Created {tile_target} (256x256)")
+
         for size in PNG_SIZES:
             target = output_directory / f"favicon-{size}.png"
             render_square(light_master, size, margin=0.04).save(
@@ -71,7 +104,7 @@ def build(source_path: Path, output_directory: Path) -> None:
             sizes=ICO_SIZES,
         )
         print(f"Created {output_directory / 'favicon.ico'}")
-        render_square(master, 256, margin=0.04).save(
+        render_tiled_square(master, 256, TILE_COLORS["dark"]).save(
             output_directory / "app-icon.ico",
             format="ICO",
             sizes=ICO_SIZES,

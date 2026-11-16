@@ -25,11 +25,13 @@ high-quality resampling. The first run downloads the model into the user's
 
 `build_logo_sizes.py` creates:
 
-- `logo-header-dark.png` and `logo-header-light.png` for the WPF header and
-  window icon. White details are recolored dark in the light variant.
+- `logo-header-dark.png` and `logo-header-light.png` for the WPF header. White
+  details are recolored dark in the light variant.
+- `logo-header-tile-dark.png` and `logo-header-tile-light.png` for the Windows
+  window icon, with rounded gray tiles matching the application theme.
 - `favicon.ico` and `favicon-16.png` through `favicon-256.png` for light
   surfaces.
-- `app-icon.ico` for the Windows executable.
+- `app-icon.ico` for the Windows executable, with a rounded dark-gray tile.
 
 Pass `--source assets\ESPxBenchmark_logo_uncropped.jpg` to process the
 uncropped original, or `--scale` to change the master enlargement. The resize

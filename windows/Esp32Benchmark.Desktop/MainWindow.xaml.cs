@@ -33,6 +33,7 @@ public partial class MainWindow : Wpf.Ui.Controls.FluentWindow
     private JsonObject? _lastResult;
     private IReadOnlyList<SerialPortDevice> _portDevices = [];
     private IReadOnlyList<string>? _knownPorts;
+    private string? _lastPortDiscoveryWarning;
     private CancellationTokenSource? _autoDetectionCancellation;
     private string? _autoDetectionPort;
     private string? _queuedAutoDetectionPort;
@@ -367,13 +368,15 @@ public partial class MainWindow : Wpf.Ui.Controls.FluentWindow
 
     private void UpdateBranding()
     {
-        var imageName = _app.ThemeService.IsDark
-            ? "logo-header-dark.png"
-            : "logo-header-light.png";
+        var theme = _app.ThemeService.IsDark ? "dark" : "light";
+        var imageName = $"logo-header-{theme}.png";
+        var iconName = $"logo-header-tile-{theme}.png";
         var image = new BitmapImage(new Uri(
             $"pack://application:,,,/Assets/{imageName}", UriKind.Absolute));
+        var icon = new BitmapImage(new Uri(
+            $"pack://application:,,,/Assets/{iconName}", UriKind.Absolute));
         BrandLogo.Source = image;
-        Icon = image;
+        Icon = icon;
     }
 
     private string L(string key, params object?[] arguments) =>
@@ -468,9 +471,13 @@ public partial class MainWindow : Wpf.Ui.Controls.FluentWindow
     {
         var oldPort = PortCombo.SelectedItem as string;
         var oldConsolePort = ConsolePortCombo.SelectedItem as string;
-        _portDevices = _serial.GetPortDevices();
+        var previousWarning = _lastPortDiscoveryWarning;
+        _portDevices = _serial.GetPortDevices(out var discoveryWarning);
+        var warningChanged = !string.Equals(
+            previousWarning, discoveryWarning, StringComparison.Ordinal);
+        _lastPortDiscoveryWarning = discoveryWarning;
         var ports = _portDevices.Select(device => device.PortName).ToArray();
-        if (!force && _knownPorts is not null &&
+        if (!force && !warningChanged && _knownPorts is not null &&
             ports.SequenceEqual(_knownPorts, StringComparer.OrdinalIgnoreCase))
         {
             return;
@@ -498,14 +505,20 @@ public partial class MainWindow : Wpf.Ui.Controls.FluentWindow
             _queuedAutoDetectionPort = null;
             SidebarBoardText.Text = L("Text.BoardNotDetected");
             SidebarClassText.Text = L("Text.ReconnectBoard");
-            SetStatus(L("Text.NoPortsAutoRefresh"),
+            SetStatus(discoveryWarning is null
+                    ? L("Text.NoPortsAutoRefresh")
+                    : L("Text.PortDiscoveryFailed", discoveryWarning),
                 error: true);
             return;
         }
 
         SidebarBoardText.Text = L("Text.BoardNotIdentified");
         SidebarClassText.Text = L("Text.DetectedPorts", string.Join(", ", ports));
-        if (oldPort is null || !ports.Contains(oldPort))
+        if (discoveryWarning is not null)
+        {
+            SetStatus(L("Text.PortDiscoveryWarning", discoveryWarning), error: true);
+        }
+        else if (warningChanged || oldPort is null || !ports.Contains(oldPort))
         {
             SetStatus(L("Text.PortsFound", ports.Length));
         }

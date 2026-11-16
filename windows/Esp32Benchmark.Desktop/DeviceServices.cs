@@ -4,6 +4,7 @@ using System.IO.Ports;
 using System.ComponentModel;
 using System.Globalization;
 using System.Runtime.InteropServices;
+using System.Security;
 using System.Text;
 using System.Text.Json.Nodes;
 using Microsoft.Win32;
@@ -12,27 +13,48 @@ using Esp32Benchmark.Core;
 
 namespace Esp32Benchmark.Desktop;
 
-public sealed record SerialPortDevice(string PortName, string? DeviceInstanceId);
-
 public sealed class SerialDeviceService
 {
-    public IReadOnlyList<string> GetPorts() =>
-        GetPortDevices().Select(device => device.PortName).ToArray();
-
-    public IReadOnlyList<SerialPortDevice> GetPortDevices()
+    public IReadOnlyList<SerialPortDevice> GetPortDevices(out string? warning)
     {
-        var devices = WindowsSerialPortDiscovery.GetPorts()
-            .ToDictionary(device => device.PortName, StringComparer.OrdinalIgnoreCase);
-        foreach (var port in SerialPort.GetPortNames())
+        var errors = new List<Exception>();
+        string[] systemPorts;
+        try
         {
-            devices.TryAdd(port, new SerialPortDevice(port, null));
+            systemPorts = SerialPort.GetPortNames();
+        }
+        catch (Exception error) when (IsExpectedPortDiscoveryFailure(error))
+        {
+            systemPorts = [];
+            errors.Add(error);
+            Trace.TraceError($"SerialPort.GetPortNames failed: {error}");
         }
 
-        return devices.Values
-            .OrderBy(device => PortNumber(device.PortName))
-            .ThenBy(device => device.PortName, StringComparer.OrdinalIgnoreCase)
-            .ToArray();
+        IReadOnlyCollection<SerialPortDevice> windowsDevices;
+        try
+        {
+            windowsDevices = WindowsSerialPortDiscovery.GetPorts();
+        }
+        catch (Exception error) when (IsExpectedPortDiscoveryFailure(error))
+        {
+            windowsDevices = [];
+            errors.Add(error);
+            Trace.TraceError($"Windows serial-device metadata discovery failed: {error}");
+        }
+
+        warning = errors.Count switch
+        {
+            0 => null,
+            1 => errors[0].Message,
+            _ => string.Join(Environment.NewLine, errors.Select(error => error.Message))
+        };
+        return SerialPortDeviceCatalog.Merge(systemPorts, windowsDevices);
     }
+
+    private static bool IsExpectedPortDiscoveryFailure(Exception error) =>
+        error is Win32Exception or IOException or UnauthorizedAccessException or SecurityException or
+            DllNotFoundException or EntryPointNotFoundException or BadImageFormatException or
+            PlatformNotSupportedException or InvalidOperationException;
 
     public Task<JsonObject> IdentifyAsync(string portName, int baudRate, TimeSpan timeout,
         CancellationToken cancellationToken = default) =>
@@ -135,12 +157,6 @@ public sealed class SerialDeviceService
         }
     }
 
-    private static int PortNumber(string name)
-    {
-        var digits = new string(name.Where(char.IsDigit).ToArray());
-        return int.TryParse(digits, out var port) ? port : int.MaxValue;
-    }
-
     private static class WindowsSerialPortDiscovery
     {
         private const uint DigcfPresent = 0x00000002;
@@ -149,32 +165,21 @@ public sealed class SerialDeviceService
         private const uint KeyRead = 0x00020019;
         private const uint ErrorNoMoreItems = 259;
         private static readonly IntPtr InvalidHandle = new(-1);
+        private static readonly Guid PortsClassGuid =
+            new("4D36E978-E325-11CE-BFC1-08002BE10318");
+        private static readonly Guid ModemClassGuid =
+            new("4D36E96D-E325-11CE-BFC1-08002BE10318");
+        private static readonly Guid[] DeviceClassGuids = [PortsClassGuid, ModemClassGuid];
 
         public static IReadOnlyCollection<SerialPortDevice> GetPorts()
         {
             var devices = new Dictionary<string, SerialPortDevice>(StringComparer.OrdinalIgnoreCase);
-            foreach (var className in new[] { "Ports", "Modem" })
+            foreach (var classGuid in DeviceClassGuids)
             {
-                foreach (var classGuid in GetClassGuids(className))
-                {
-                    EnumerateClass(classGuid, devices);
-                }
+                EnumerateClass(classGuid, devices);
             }
 
             return devices.Values.ToArray();
-        }
-
-        private static IEnumerable<Guid> GetClassGuids(string className)
-        {
-            var classGuids = new Guid[8];
-            if (!SetupDiClassGuidsFromName(className, classGuids,
-                    (uint)classGuids.Length, out var requiredCount))
-            {
-                throw new Win32Exception(Marshal.GetLastWin32Error(),
-                    $"Could not enumerate Windows device class '{className}'.");
-            }
-
-            return classGuids.Take((int)Math.Min(requiredCount, (uint)classGuids.Length)).ToArray();
         }
 
         private static void EnumerateClass(
@@ -244,12 +249,6 @@ public sealed class SerialDeviceService
             public uint DeviceInstance;
             public IntPtr Reserved;
         }
-
-        [DllImport("setupapi.dll", EntryPoint = "SetupDiClassGuidsFromNameW",
-            CharSet = CharSet.Unicode, SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool SetupDiClassGuidsFromName(
-            string className, [Out] Guid[] classGuidList, uint classGuidListSize, out uint requiredSize);
 
         [DllImport("setupapi.dll", EntryPoint = "SetupDiGetClassDevsW",
             CharSet = CharSet.Unicode, SetLastError = true)]

@@ -101,6 +101,8 @@
   "Text.PleaseWait": "Veuillez patienter",
   "Text.OperationCancelled": "Opération annulée",
   "Text.NoPortsAutoRefresh": "Aucun port COM. Branchez un câble USB de données; une nouvelle recherche sera effectuée automatiquement.",
+  "Text.PortDiscoveryFailed": "La détection des ports série a échoué : {0}. Vérifiez le Gestionnaire de périphériques et reconnectez la carte.",
+  "Text.PortDiscoveryWarning": "Les ports sont listés, mais une méthode de détection a signalé un problème : {0}",
   "Text.DetectedPorts": "Ports détectés : {0}",
   "Text.PortsFound": "{0} port(s) série trouvé(s)",
   "Text.DetectingChip": "Connectée sur {0}; identification de la puce en cours.",

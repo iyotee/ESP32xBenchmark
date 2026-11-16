@@ -49,12 +49,14 @@ fails if the embedded files are absent or do not extract byte-for-byte.
 
 ## Hardware workflow
 
-- **COM ports and identity:** Ports are enumerated through Windows SetupAPI
-  device classes, matching PySerial's Windows discovery, and combined with
-  `System.IO.Ports` results. The list refreshes automatically while the app is
-  open; use **Refresh** to query immediately. If Windows reports no port,
-  reconnect a data-capable USB cable and check Device Manager for the board's
-  USB-serial driver.
+- **COM ports and identity:** `System.IO.Ports` provides the primary COM-port
+  list. Windows SetupAPI adds device instance IDs for board-specific USB
+  detection; it uses stable device-class GUIDs and is not required for COM
+  names to appear. If SetupAPI metadata lookup fails, the COM list remains
+  available and the app reports the warning. The list refreshes automatically
+  while the app is open; use **Refresh** to query immediately. If no port is
+  listed, reconnect a data-capable USB cable and check Device Manager for the
+  board's USB-serial driver.
   Existing benchmark firmware provides its target metadata directly; otherwise
   the ROM probe identifies the silicon even when the carrier uses a generic
   CH340/CP210x/FTDI USB bridge.
@@ -153,7 +155,7 @@ unit tests validate protocol and scoring but do not simulate hardware.
 ## Portable releases and updates
 
 - Stable Windows releases use tags in `VYYYY.MM.DD.N` form, for example
-  `V2026.11.16.1`. Pushing a tag runs the Windows test/publish workflow and
+  `V2026.11.16.2`. Pushing a tag runs the Windows test/publish workflow and
   attaches the self-contained `ESP32xBenchmark-win-x64.exe` to a GitHub Release.
 - The release workflow publishes `latest.json` on `main` with the newest
   release tag and the executable's SHA-256 digest. The app checks that public

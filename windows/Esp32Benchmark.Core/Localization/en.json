@@ -101,6 +101,8 @@
   "Text.PleaseWait": "Please wait",
   "Text.OperationCancelled": "Operation cancelled",
   "Text.NoPortsAutoRefresh": "No COM ports. Connect a data-capable USB cable; checking again automatically.",
+  "Text.PortDiscoveryFailed": "Serial-port discovery failed: {0}. Check Device Manager and reconnect the board.",
+  "Text.PortDiscoveryWarning": "Ports are listed, but one discovery method reported an issue: {0}",
   "Text.DetectedPorts": "Detected ports: {0}",
   "Text.PortsFound": "Found {0} serial port(s)",
   "Text.DetectingChip": "Connected on {0}; detecting chip automatically.",
