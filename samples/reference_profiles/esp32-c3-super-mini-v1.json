@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "profile_id": "esp32-c3-super-mini-v1",
+  "reference_run_id": "54046985",
+  "reference_run_ids": [
+    "54046985",
+    "c7331a3f",
+    "8583a61e"
+  ],
+  "calibration_run_count": 3,
+  "calibrated_at": "2026-11-16T15:08:12Z",
+  "comparability_class": "low_cost_wifi_ble",
+  "reference_device": {
+    "target": "ESP32-C3",
+    "family": "esp32c3",
+    "architecture": "RISC-V",
+    "firmware_version": "0.2.0",
+    "comparability_class": "low_cost_wifi_ble",
+    "cores": 1,
+    "cpu_mhz": 160,
+    "flash_bytes": 4194304,
+    "psram_bytes": 0,
+    "heap_free_bytes": 260884,
+    "sdk_version": "v5.5.5",
+    "wifi_supported": true,
+    "ble_supported": true
+  },
+  "reference_host": {
+    "collector_version": "0.2.0",
+    "python_version": "3.12.10",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "platformio_environment": "esp32c3_supermini",
+    "serial_baud": 115200
+  },
+  "metrics": {
+    "integer_mix_miter_s": {
+      "category": "cpu",
+      "value": 11.3574,
+      "unit": "Miter/s",
+      "direction": "higher"
+    },
+    "float_mix_miter_s": {
+      "category": "cpu",
+      "value": 0.2523,
+      "unit": "Miter/s",
+      "direction": "higher"
+    },
+    "sram_write_mib_s": {
+      "category": "memory",
+      "value": 18.9538,
+      "unit": "MiB/s",
+      "direction": "higher"
+    },
+    "sram_read_mib_s": {
+      "category": "memory",
+      "value": 16.8492,
+      "unit": "MiB/s",
+      "direction": "higher"
+    },
+    "allocation_latency_us": {
+      "category": "memory",
+      "value": 10.7031,
+      "unit": "us/op",
+      "direction": "lower"
+    },
+    "flash_read_mib_s": {
+      "category": "memory",
+      "value": 11.0502,
+      "unit": "MiB/s",
+      "direction": "higher"
+    },
+    "gpio_transitions_s": {
+      "category": "peripherals",
+      "value": 2208480.5654,
+      "unit": "transitions/s",
+      "direction": "higher"
+    },
+    "task_handoff_us": {
+      "category": "rtos",
+      "value": 14.3756,
+      "unit": "us/round_trip",
+      "direction": "lower"
+    },
+    "queue_roundtrip_us": {
+      "category": "rtos",
+      "value": 2.6793,
+      "unit": "us/op",
+      "direction": "lower"
+    }
+  },
+  "notice": "Measured calibration run; reference values are not manufacturer specifications."
+}

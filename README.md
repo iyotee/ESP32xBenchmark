@@ -90,7 +90,7 @@ Calibration is only as good as the reference run. Use stable power, clock, build
 
 ## PlatformIO targets
 
-PlatformIO build environments are provided for ESP32, S2, S3, C3, and C6; the connected classic ESP32 Dev Module (`ESP32-D0WD-V3`) is the physically calibrated target. The firmware identifies the SoC and assigns a comparability class at runtime. Additional radio/peripheral fixtures are part of the expansion plan in [PLAN.md](PLAN.md).
+PlatformIO build environments are provided for ESP32, S2, S3, C3, C6, and the C3 Super Mini. The Super Mini profile enables its native USB-Serial/JTAG CDC console; other C3 boards can use the regular `esp32c3` environment. Physical calibration profiles currently cover the connected classic ESP32 Dev Module (`ESP32-D0WD-V3`) and a tested ESP32-C3 Super Mini. The firmware identifies the SoC and assigns a comparability class at runtime. Scores from different comparability classes must not be compared as one global index. Additional radio/peripheral fixtures are part of the expansion plan in [PLAN.md](PLAN.md).
 
 ## Reference projects and attribution
 
