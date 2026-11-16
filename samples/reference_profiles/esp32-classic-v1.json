@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "profile_id": "esp32-classic-v1",
+  "reference_run_id": "f5342f38",
+  "reference_run_ids": [
+    "f5342f38",
+    "3d6c1c7f",
+    "fbea874c"
+  ],
+  "calibration_run_count": 3,
+  "calibrated_at": "2026-11-16T14:48:28Z",
+  "comparability_class": "classic_wifi_ble",
+  "reference_device": {
+    "target": "ESP32-D0WD-V3",
+    "family": "esp32",
+    "architecture": "Xtensa",
+    "firmware_version": "0.2.0",
+    "comparability_class": "classic_wifi_ble",
+    "cores": 2,
+    "cpu_mhz": 240,
+    "flash_bytes": 4194304,
+    "psram_bytes": 0,
+    "heap_free_bytes": 286120,
+    "sdk_version": "v5.5.5",
+    "wifi_supported": true,
+    "ble_supported": true
+  },
+  "reference_host": {
+    "collector_version": "0.2.0",
+    "python_version": "3.12.10",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "platformio_environment": "esp32dev",
+    "serial_baud": 115200
+  },
+  "metrics": {
+    "integer_mix_miter_s": {
+      "category": "cpu",
+      "value": 29.8864,
+      "unit": "Miter/s",
+      "direction": "higher"
+    },
+    "float_mix_miter_s": {
+      "category": "cpu",
+      "value": 8.2449,
+      "unit": "Miter/s",
+      "direction": "higher"
+    },
+    "sram_write_mib_s": {
+      "category": "memory",
+      "value": 25.3338,
+      "unit": "MiB/s",
+      "direction": "higher"
+    },
+    "sram_read_mib_s": {
+      "category": "memory",
+      "value": 19.0006,
+      "unit": "MiB/s",
+      "direction": "higher"
+    },
+    "flash_read_mib_s": {
+      "category": "memory",
+      "value": 8.3068,
+      "unit": "MiB/s",
+      "direction": "higher"
+    },
+    "gpio_transitions_s": {
+      "category": "peripherals",
+      "value": 3541578.1272,
+      "unit": "transitions/s",
+      "direction": "higher"
+    },
+    "task_handoff_us": {
+      "category": "rtos",
+      "value": 32.0028,
+      "unit": "us/round_trip",
+      "direction": "lower"
+    },
+    "queue_roundtrip_us": {
+      "category": "rtos",
+      "value": 3.5319,
+      "unit": "us/op",
+      "direction": "lower"
+    }
+  },
+  "notice": "Measured calibration run; reference values are not manufacturer specifications."
+}

@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "esp32-benchmark"
+version = "0.2.0"
+description = "Reproducible ESP32 benchmark firmware collection, scoring, and reporting"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "ESP32xBenchmark" }]
+dependencies = []
+
+[project.optional-dependencies]
+hardware = ["pyserial>=3.5"]
+test = ["pytest>=8"]
+
+[project.scripts]
+esp32-benchmark = "esp32_benchmark.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
