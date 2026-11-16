@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "profile_id": "esp8266-d1-mini-v1",
+  "reference_run_id": "9e4ae7be",
+  "reference_run_ids": [
+    "9e4ae7be",
+    "3df1206d",
+    "dd974304"
+  ],
+  "calibration_run_count": 3,
+  "calibrated_at": "2026-11-16T15:32:14Z",
+  "comparability_class": "esp8266_wifi",
+  "reference_device": {
+    "target": "ESP8266EX",
+    "family": "esp8266",
+    "architecture": "Xtensa-LX106",
+    "firmware_version": "0.2.0",
+    "comparability_class": "esp8266_wifi",
+    "cores": 1,
+    "cpu_mhz": 80,
+    "flash_bytes": 4194304,
+    "psram_bytes": 0,
+    "heap_free_bytes": 50568,
+    "sdk_version": "2.2.2-dev(38a443e)",
+    "wifi_supported": true,
+    "ble_supported": false
+  },
+  "reference_host": {
+    "collector_version": "0.2.0",
+    "python_version": "3.12.10",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "platformio_environment": "esp8266",
+    "serial_baud": 115200
+  },
+  "metrics": {
+    "integer_mix_miter_s": {
+      "category": "cpu",
+      "value": 5.3303,
+      "unit": "Miter/s",
+      "direction": "higher"
+    },
+    "float_mix_miter_s": {
+      "category": "cpu",
+      "value": 0.1856,
+      "unit": "Miter/s",
+      "direction": "higher"
+    },
+    "sram_write_mib_s": {
+      "category": "memory",
+      "value": 8.4756,
+      "unit": "MiB/s",
+      "direction": "higher"
+    },
+    "sram_read_mib_s": {
+      "category": "memory",
+      "value": 5.8683,
+      "unit": "MiB/s",
+      "direction": "higher"
+    },
+    "allocation_latency_us": {
+      "category": "memory",
+      "value": 6.4531,
+      "unit": "us/op",
+      "direction": "lower"
+    },
+    "flash_read_mib_s": {
+      "category": "memory",
+      "value": 4.7309,
+      "unit": "MiB/s",
+      "direction": "higher"
+    },
+    "gpio_transitions_s": {
+      "category": "peripherals",
+      "value": 565335.866,
+      "unit": "transitions/s",
+      "direction": "higher"
+    }
+  },
+  "notice": "Measured calibration run; reference values are not manufacturer specifications."
+}

@@ -41,6 +41,7 @@ Serial logging and Wi-Fi scans affect power and timing. They are reported separa
 
 ## What current firmware does not claim
 
+- ESP8266 uses a separate Arduino-core firmware and `esp8266_wifi` comparability class. Its RTOS tests are skipped because this target does not expose the same FreeRTOS interface as ESP32; ESP8266 scores must not be compared to ESP32 class indices.
 - A Wi-Fi scan is not TCP/UDP throughput. It is informational only.
 - GPIO API toggles per second are not pin rise/fall time, signal integrity, or a full peripheral benchmark.
 - CPU workload iteration rates are project-local workloads; they are not CoreMark or Embench results.

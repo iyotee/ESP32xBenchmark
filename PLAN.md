@@ -37,7 +37,8 @@ Provide reproducible, auditable comparisons across ESP32 families by combining a
 ### Phase 3 — broader hardware coverage
 - [x] Add PlatformIO build environments for ESP32, S2, S3, C3, and C6; verify builds for all five targets.
 - [x] Add native USB-Serial/JTAG CDC support for the C3 Super Mini, flash the connected board, and publish its class-specific calibration and verification runs.
-- [ ] Flash and collect verified calibration profiles for S2, S3, C3, and C6; add H2/P4 only after framework support is confirmed.
+- [x] Add separate ESP8266 firmware for the Wemos D1 mini, flash the connected board, and publish its class-specific calibration and verification runs.
+- [ ] Flash and collect verified calibration profiles for S2, S3, and C6; add H2/P4 only after framework support is confirmed.
 - [ ] Add a host/peer-driven Wi-Fi TCP/UDP suite using Espressif's iperf methodology.
 - [ ] Add BLE, ESP-NOW, Thread/Zigbee and controlled-distance workloads where supported.
 - [x] Accept externally measured metrics (e.g. power probe or peer throughput) as validated-format JSON supplements.

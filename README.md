@@ -1,6 +1,6 @@
 # ESP32xBenchmark
 
-ESP32xBenchmark is a reproducible, hardware-measured benchmark suite for ESP32-family development boards. The firmware emits structured serial records; the host collector aggregates three complete suite repetitions by default, creates JSON/CSV/HTML reports, and calculates a weighted global index against a same-class calibration profile.
+ESP32xBenchmark is a reproducible, hardware-measured benchmark suite for ESP32-family and ESP8266 development boards. The firmware emits structured serial records; the host collector aggregates three complete suite repetitions by default, creates JSON/CSV/HTML reports, and calculates a weighted global index against a same-class calibration profile.
 
 > **This is not a simulated benchmark.** The firmware reports real measurements. Categories that need unavailable hardware or peers are marked skipped and excluded from the score.
 
@@ -36,6 +36,12 @@ The capture command writes:
 - `artifacts/results.csv` — one row per metric
 - `artifacts/results.html` — human-readable report
 - `artifacts/reference_profile.json` — created only when `--calibrate` is used
+
+For a Wemos D1 mini (ESP8266), select its separate firmware environment and its own calibration class:
+
+```powershell
+python -m esp32_benchmark.cli capture --port COM6 --project-dir platformio_test --environment esp8266 --upload --calibrate esp8266-d1-mini-v1 --profile-output samples\reference_profiles\esp8266-d1-mini-v1.json --output-dir samples\reference_profiles\esp8266-d1-mini-v1-run
+```
 
 For later runs in the same comparability class:
 
@@ -90,7 +96,7 @@ Calibration is only as good as the reference run. Use stable power, clock, build
 
 ## PlatformIO targets
 
-PlatformIO build environments are provided for ESP32, S2, S3, C3, C6, and the C3 Super Mini. The Super Mini profile enables its native USB-Serial/JTAG CDC console; other C3 boards can use the regular `esp32c3` environment. Physical calibration profiles currently cover the connected classic ESP32 Dev Module (`ESP32-D0WD-V3`) and a tested ESP32-C3 Super Mini. The firmware identifies the SoC and assigns a comparability class at runtime. Scores from different comparability classes must not be compared as one global index. Additional radio/peripheral fixtures are part of the expansion plan in [PLAN.md](PLAN.md).
+PlatformIO build environments are provided for ESP32, S2, S3, C3, C6, the C3 Super Mini, and the ESP8266-based Wemos D1 mini. The Super Mini profile enables its native USB-Serial/JTAG CDC console; other C3 boards can use the regular `esp32c3` environment. ESP8266 has a separate firmware because it does not share the ESP32 SDK or FreeRTOS capabilities. Physical calibration profiles currently cover the classic ESP32 Dev Module (`ESP32-D0WD-V3`), the ESP32-C3 Super Mini, and the Wemos D1 mini. The firmware identifies the SoC and assigns a comparability class at runtime. Scores from different comparability classes must not be compared as one global index. Additional radio/peripheral fixtures are part of the expansion plan in [PLAN.md](PLAN.md).
 
 ## Reference projects and attribution
 

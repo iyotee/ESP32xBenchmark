@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "esp32-benchmark"
 version = "0.2.0"
-description = "Reproducible ESP32 benchmark firmware collection, scoring, and reporting"
+description = "Reproducible ESP32 and ESP8266 benchmark collection, scoring, and reporting"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
