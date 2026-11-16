@@ -1,111 +1,112 @@
-# Windows desktop app
+# Windows desktop application
 
-ESP32xBenchmark includes a native-feeling Tkinter desktop app and a PyInstaller
-single-file Windows executable workflow. The app uses the project's existing
-collector, scoring/comparison functions, and JSON/CSV/HTML report writers; the
-command-line interface remains unchanged.
+The desktop application is a native C#/.NET 8 WPF app with Fluent styling from
+[WPF UI](https://github.com/lepoco/wpfui) (MIT, pinned at 4.3.0). It is not a
+Python launcher or a wrapper around the command line. The existing Python CLI
+and firmware remain available and unchanged. The C# core reads the same
+line-delimited serial JSON, result JSON, reference profiles, category weights,
+stability threshold, and comparison rules.
 
-## Run from the source checkout
+## Run and publish
 
-Python 3.10+ is required. Install serial support and launch the GUI from the
-repository root:
-
-```powershell
-python -m pip install -e ".[desktop]"
-python -m esp32_benchmark.gui
-```
-
-Or install the console entry point and run `esp32-benchmark-gui`. Tkinter is
-included with standard Windows Python distributions. If Python reports that
-Tkinter is unavailable, install/repair Python with its Tcl/Tk component.
-
-## Portable one-file executable (no installer)
-
-Build on Windows with Python 3.12 and the Python launcher (`py`). From the
-repository root:
+The build machine needs Windows x64, internet access for package restore, and a
+.NET 8 SDK. The repository script uses an installed SDK if it has one; when it
+does not, it downloads and installs the official Microsoft .NET 8 SDK locally
+under `windows\.dotnet`:
 
 ```powershell
-.\scripts\build_windows_exe.ps1
+.\scripts\build_windows_desktop.ps1
 ```
 
-The script creates an isolated `.venv-windows-build`, installs the exact
-versions in `requirements-windows-build.txt`, and builds:
+The script runs the .NET parity/protocol tests and publishes a self-contained,
+single-file executable:
 
 ```text
-dist\ESP32xBenchmark.exe
+windows\Esp32Benchmark.Desktop\publish\ESP32xBenchmark.exe
 ```
 
-The executable is a single portable file; it does not require Python or an
-installer on the target PC. The PlatformIO project configuration and benchmark
-firmware sources are bundled in the EXE. Copy it to a writable folder and run
-it. Windows may show its normal SmartScreen warning for an unsigned locally
-built binary. The source build is not code-signed. PyInstaller extracts its
-bundled runtime and firmware sources to a temporary directory while running.
-
-The GUI's history database is stored in
-`%LOCALAPPDATA%\ESP32xBenchmark\history.sqlite3`; it is not stored alongside
-the executable. Reports and generated reference profiles are written to the
-folder configured in the app.
-
-## Hardware and firmware workflow
-
-1. Connect the board by USB and choose **Refresh**. The serial-port list comes
-   from pyserial; USB VID/PID data is not treated as conclusive board identity.
-2. With benchmark firmware already installed, choose the COM port and
-   **Identify board**. The app listens for the firmware's JSON `run_start`
-   record and selects a compatible PlatformIO environment when its SoC is
-   recognized. Opening the port can reset the board. A non-benchmark firmware,
-   bootloader-only connection, or closed serial port may not be identifiable.
-3. Use **Build firmware** or select **Upload before capture**. Build/upload
-   uses the bundled `platformio_test/platformio.ini` and firmware sources with
-   the external PlatformIO Core CLI (`pio`). PlatformIO and its platform/
-   toolchain packages are intentionally not bundled; install them separately.
-   Upload explicitly targets the selected COM port.
-4. Choose a reference profile if scoring is desired, then capture. The default
-   is three complete runs, matching the existing CLI collector behavior.
-   JSON, CSV, and HTML reports are written under `artifacts\desktop\latest`.
-5. To use the serial console, connect in its tab, enter a line and send it.
-   Disconnect before build, upload, identify, or capture; only one application
-   can own a COM port at a time.
-
-If no COM port is listed, confirm the board is connected, install the
-manufacturer's USB-serial driver if required, and refresh. If pyserial is not
-present in a source run, install `.[desktop]`. Capture timeouts explain how
-many complete runs arrived; select the correct baud rate, reset the board,
-and retry. Unsupported or unknown SoCs remain selectable manually, but no
-unsupported firmware target is silently guessed.
-
-## Results, calibration, and comparison
-
-- Captures and imported results are stored in the user's local SQLite history,
-  tagged by target, comparability class, and selected profile.
-- Import a measured reference JSON profile from the run tab. **Calibrate
-  selected** creates a profile from a selected measured run using the existing
-  `make_reference_profile` validation rules.
-- Select a profile and open **History & compare**. Select two or more runs and
-  compare. The app calls the existing `compare_results` API, which permits
-  cross-class comparison only over stable metrics shared by all entries and
-  the one selected profile. It does not create its own scoring formula.
-- A regular score still requires a matching `comparability_class`; mismatches
-  are surfaced as errors. Reference scores are indices (reference = 100), not
-  universal percentages. Coverage and exclusions remain visible in reports.
-
-## Developer notes
-
-- GUI orchestration: `src/esp32_benchmark/gui.py`
-- Testable serial/profile/history/report helpers:
-  `src/esp32_benchmark/gui_backend.py`
-- PyInstaller entry point: `desktop_entry.py`
-- Pinned Windows build dependencies: `requirements-windows-build.txt`
-- One-file build script: `scripts/build_windows_exe.ps1`
-
-Backend/GUI-focused tests can be run with:
+Equivalent direct commands when the SDK is installed:
 
 ```powershell
-python -m pip install -e ".[test,desktop]"
-python -m pytest tests\test_gui_backend.py tests\test_scoring.py
+dotnet test windows\ESP32xBenchmark.sln --configuration Release
+dotnet publish windows\Esp32Benchmark.Desktop\Esp32Benchmark.Desktop.csproj `
+  --configuration Release -p:PublishProfile=win-x64
 ```
 
-Tk widget tests require a Windows desktop session. Hardware capture, flashing,
-and physical-board identification additionally require a connected supported
-board and are not simulated by the unit tests.
+The EXE bundles the .NET runtime and WPF UI library; the target PC does not need
+Python, .NET, or an installer. The binary is unsigned, so Windows SmartScreen
+may warn when launching a locally built release.
+
+The EXE also embeds `platformio.ini`, `src/main.cpp`, and
+`src/main_esp8266.cpp`. If the optional **External PlatformIO project** field is
+left blank, the app verifies/extracts the matching firmware sources to a
+content-versioned writable folder under
+`%LOCALAPPDATA%\ESP32xBenchmark\firmware-projects`. This lets the EXE be copied
+and run outside the checkout while keeping PlatformIO build/upload available.
+Selecting an external project folder uses that folder instead of the bundled
+copy. The build script launches the published EXE in a verification mode and
+fails if the embedded files are absent or do not extract byte-for-byte.
+
+## Hardware workflow
+
+- **COM ports and identity:** Ports are discovered through `System.IO.Ports`.
+  Identify listens for the firmware's JSON `run_start` device metadata. This
+  identifies the supported SoC/family when benchmark firmware is running.
+  Opening a port may reset the board. USB bridge hardware IDs alone are not
+  considered a reliable board model.
+- **Environment selection:** Known SoCs map to the corresponding existing
+  PlatformIO environment. Firmware metadata cannot distinguish every carrier
+  board variant (for example, generic ESP32-C3 versus a C3 Super Mini), so the
+  environment remains editable and is never silently forced for an unknown
+  target.
+- **Build and upload:** Build invokes `pio run -e <environment>`. Upload invokes
+  `pio run -e <environment> -t upload --upload-port <selected COM port>`.
+  Upload always uses the explicit COM port selected in the app. PlatformIO Core,
+  the board platform, and toolchains are external prerequisites and are
+  intentionally not bundled; the firmware source files needed by this project
+  are embedded in the EXE and materialized into the per-user cache when needed.
+- **Capture:** Capture consumes the existing line-delimited JSON protocol and
+  aggregates the requested number of complete runs with the same median,
+  min/max, run-variation and stability behavior as the Python collector.
+- **Serial console:** The console supports live receive and line sends. Close it
+  before identify, build, upload, or capture because only one process can own a
+  COM port at a time.
+
+If no COM port is listed, connect the board, install its USB-serial driver if
+needed, and refresh. Unsupported firmware identity and COM-in-use errors are
+shown directly. Capture timeouts report the number of complete runs received.
+
+## Scores, history, and reports
+
+- History and imported profiles live under
+  `%LOCALAPPDATA%\ESP32xBenchmark\history` and
+  `%LOCALAPPDATA%\ESP32xBenchmark\profiles`. Each saved run is tagged by
+  target, comparability class, and selected reference profile.
+- Results and comparisons are exported as JSON, CSV, and HTML under
+  `%LOCALAPPDATA%\ESP32xBenchmark\artifacts`.
+- Scoring follows the existing weighted categories, higher/lower metric
+  directions, the 25% stability cutoff, reference class check, uncapped
+  reference index, and coverage calculation.
+- Cross-board comparison calls the C# port of the shared-reference semantics:
+  one reference is applied to the stable metric intersection present in every
+  selected board result. It does not imply unsupported categories are
+  equivalent.
+- Calibration profiles are created only from measured, valid result metrics.
+
+`windows\Esp32Benchmark.Tests` includes parity tests against the published
+Python comparison JSON and serial-protocol tests. The Python CLI has its own
+unchanged tests under `tests/`.
+
+## Layout
+
+- `windows\Esp32Benchmark.Desktop` — WPF shell, Fluent UI, serial/PlatformIO
+  orchestration, local history, and operator workflows.
+- `windows\Esp32Benchmark.Core` — JSON protocol aggregation, environment
+  recommendation, scoring/comparison rules, and report writers.
+- `windows\Esp32Benchmark.Tests` — .NET parity and protocol tests using checked
+  in benchmark samples.
+- `scripts\build_windows_desktop.ps1` — .NET SDK bootstrap, tests and single-file
+  publish workflow.
+
+Physical upload/capture still requires a supported board and its USB driver;
+unit tests validate protocol and scoring but do not simulate hardware.

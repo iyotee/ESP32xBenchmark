@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>12.0</LangVersion>
+    <AssemblyName>ESP32xBenchmark</AssemblyName>
+    <RootNamespace>Esp32Benchmark.Desktop</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Esp32Benchmark.Core\Esp32Benchmark.Core.csproj" />
+    <PackageReference Include="System.IO.Ports" Version="8.0.0" />
+    <PackageReference Include="WPF-UI" Version="4.3.0" />
+    <EmbeddedResource Include="..\..\platformio_test\platformio.ini"
+                      LogicalName="Esp32Benchmark.Desktop.Firmware.platformio.ini" />
+    <EmbeddedResource Include="..\..\platformio_test\src\main.cpp"
+                      LogicalName="Esp32Benchmark.Desktop.Firmware.main.cpp" />
+    <EmbeddedResource Include="..\..\platformio_test\src\main_esp8266.cpp"
+                      LogicalName="Esp32Benchmark.Desktop.Firmware.main_esp8266.cpp" />
+  </ItemGroup>
+</Project>

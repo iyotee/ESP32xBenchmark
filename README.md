@@ -88,25 +88,22 @@ The host can build and upload as part of capture with `--upload`; use `--environ
 
 ## Windows desktop app
 
-Install the optional desktop dependencies and launch the GUI from the project:
+The Windows app is a native **C#/.NET 8 WPF** application with Fluent styling.
+The portable self-contained EXE does not need Python, an installer, or a .NET
+runtime on its target PC. On Windows, build and test it with:
 
 ```powershell
-python -m pip install -e ".[desktop]"
-python -m esp32_benchmark.gui
+.\scripts\build_windows_desktop.ps1
 ```
 
-For a portable single-file executable that requires no installer or Python
-runtime on the target PC, build on Windows with Python 3.12:
-
-```powershell
-.\scripts\build_windows_exe.ps1
-```
-
-This creates `dist\ESP32xBenchmark.exe`; the firmware project and supported
-benchmark sources are bundled in the portable file. Build/upload still
-requires the external PlatformIO CLI and board toolchains. See
-[docs/WINDOWS_GUI.md](docs/WINDOWS_GUI.md) for the complete workflow, history,
-reference profiles, comparison behavior, and packaging details.
+The script uses the system .NET 8 SDK when available; otherwise it installs the
+official SDK locally under `windows\.dotnet`. The output is
+`windows\Esp32Benchmark.Desktop\publish\ESP32xBenchmark.exe`. The existing
+Python CLI remains available separately with `python -m esp32_benchmark.cli`.
+Firmware sources are embedded in the EXE and extracted to a versioned per-user
+cache when no external PlatformIO project folder is selected. Firmware
+build/upload still uses the external PlatformIO CLI and toolchains.
+See [docs/WINDOWS_GUI.md](docs/WINDOWS_GUI.md) for workflows and details.
 
 ## Global score
 

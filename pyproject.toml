@@ -14,12 +14,10 @@ dependencies = []
 
 [project.optional-dependencies]
 hardware = ["pyserial>=3.5"]
-desktop = ["pyserial>=3.5", "pyinstaller>=6.0"]
 test = ["pytest>=8"]
 
 [project.scripts]
 esp32-benchmark = "esp32_benchmark.cli:main"
-esp32-benchmark-gui = "esp32_benchmark.gui:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
