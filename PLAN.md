@@ -57,6 +57,13 @@ Provide reproducible, auditable comparisons across ESP32 families by combining a
 - [x] Publish the verified implementation to the configured GitHub repository.
 - [x] Publish the classic ESP32 calibration run with firmware version, SDK, board, host, and environment metadata.
 
+### Phase 6 — Windows desktop application
+- [x] Add a Tkinter desktop workflow that uses the existing capture, scoring, comparison, and report APIs.
+- [x] Detect serial ports, inspect benchmark firmware identity where possible, and recommend a compatible PlatformIO environment.
+- [x] Provide asynchronous build/upload/capture and an interactive serial console without blocking the UI.
+- [x] Present benchmark measurements and scores in structured views and persist run history for later board/profile comparisons.
+- [x] Add focused GUI/backend tests and Windows usage/developer documentation, including a one-file Windows EXE build workflow.
+
 ## Comparability rules
 
 1. Every firmware run reports a `comparability_class`.

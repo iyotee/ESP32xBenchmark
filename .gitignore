@@ -6,4 +6,8 @@ __pycache__/
 artifacts/
 .vscode/
 .venv/
+.venv-windows-build/
 venv/
+build/
+dist/
+ESP32xBenchmark.spec

@@ -86,6 +86,28 @@ Pass it with `--supplement measurements.json` to `capture` or `score`. The suppl
 
 The host can build and upload as part of capture with `--upload`; use `--environment` to select a PlatformIO environment.
 
+## Windows desktop app
+
+Install the optional desktop dependencies and launch the GUI from the project:
+
+```powershell
+python -m pip install -e ".[desktop]"
+python -m esp32_benchmark.gui
+```
+
+For a portable single-file executable that requires no installer or Python
+runtime on the target PC, build on Windows with Python 3.12:
+
+```powershell
+.\scripts\build_windows_exe.ps1
+```
+
+This creates `dist\ESP32xBenchmark.exe`; the firmware project and supported
+benchmark sources are bundled in the portable file. Build/upload still
+requires the external PlatformIO CLI and board toolchains. See
+[docs/WINDOWS_GUI.md](docs/WINDOWS_GUI.md) for the complete workflow, history,
+reference profiles, comparison behavior, and packaging details.
+
 ## Global score
 
 The score is a **reference index**, not a fabricated universal percentage:
