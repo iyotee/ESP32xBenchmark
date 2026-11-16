@@ -27,15 +27,21 @@ def _positive_number(value: Any, label: str) -> float:
 
 
 def score_result(
-    result: dict[str, Any], reference_profile: dict[str, Any]
+    result: dict[str, Any],
+    reference_profile: dict[str, Any],
+    *,
+    allow_cross_class: bool = False,
+    metric_names: set[str] | None = None,
 ) -> dict[str, Any]:
-    """Score only measured metrics with matching, same-class calibration data."""
+    """Score measured metrics against a profile; cross-class mode is explicit."""
     device = result.get("device")
     if not isinstance(device, dict):
         raise ValueError("Result is missing device metadata.")
     result_class = device.get("comparability_class")
     reference_class = reference_profile.get("comparability_class")
-    if not result_class or result_class != reference_class:
+    if not result_class or (
+        result_class != reference_class and not allow_cross_class
+    ):
         raise ValueError(
             "Result and reference profile must have the same comparability_class."
         )
@@ -57,6 +63,8 @@ def score_result(
         name = metric.get("name")
         if category not in CATEGORY_WEIGHTS or not isinstance(name, str):
             raise ValueError("Scored measurements need a known category and metric name.")
+        if metric_names is not None and name not in metric_names:
+            continue
         reference = reference_metrics.get(name)
         if not isinstance(reference, dict):
             unmatched_metrics.append(name)
@@ -128,6 +136,109 @@ def score_result(
         "interpretation": (
             "Power requires an external current monitor; AI/TinyML requires a supported "
             "model/runtime. Missing categories are excluded and coverage is reported."
+        ),
+    }
+
+
+def compare_results(
+    results: list[dict[str, Any]], reference_profile: dict[str, Any]
+) -> dict[str, Any]:
+    """Compare boards against one reference using only metrics common to all."""
+    if len(results) < 2:
+        raise ValueError("At least two results are required for a comparison.")
+    if not reference_profile.get("comparability_class"):
+        raise ValueError("Reference profile has no comparability_class metadata.")
+    reference_metrics = reference_profile.get("metrics")
+    if not isinstance(reference_metrics, dict):
+        raise ValueError("Invalid reference profile metric format.")
+
+    common_names = set(reference_metrics)
+    for result in results:
+        device = result.get("device")
+        metrics = result.get("metrics")
+        if not isinstance(device, dict) or not device.get("comparability_class"):
+            raise ValueError("Each result must have device comparability metadata.")
+        if not isinstance(metrics, list):
+            raise ValueError("Each result must have a metrics list.")
+
+        measured_names: set[str] = set()
+        for metric in metrics:
+            if not isinstance(metric, dict) or metric.get("status") != "ok":
+                continue
+            name = metric.get("name")
+            reference = reference_metrics.get(name) if isinstance(name, str) else None
+            if not isinstance(reference, dict):
+                continue
+            if (
+                metric.get("category") != reference.get("category")
+                or metric.get("direction") != reference.get("direction")
+                or metric.get("unit", "") != reference.get("unit", "")
+            ):
+                continue
+
+            stdev_percent = metric.get("stdev_pct")
+            if stdev_percent is not None:
+                if (
+                    isinstance(stdev_percent, bool)
+                    or not isinstance(stdev_percent, (int, float))
+                ):
+                    raise ValueError(f"{name}.stdev_pct must be a non-negative number.")
+                stdev_percent = float(stdev_percent)
+                if not isfinite(stdev_percent) or stdev_percent < 0:
+                    raise ValueError(
+                        f"{name}.stdev_pct must be a finite non-negative number."
+                    )
+                if stdev_percent > MAX_STDEV_PERCENT:
+                    continue
+            _positive_number(metric.get("value"), f"{name}.value")
+            measured_names.add(name)
+        common_names.intersection_update(measured_names)
+
+    if not common_names:
+        raise ValueError(
+            "The results have no stable, matching metrics in common with the reference."
+        )
+
+    scored_results = []
+    for result in results:
+        scores = score_result(
+            result,
+            reference_profile,
+            allow_cross_class=True,
+            metric_names=common_names,
+        )
+        device = result["device"]
+        scored_results.append(
+            {
+                "target": device.get("target", "unknown"),
+                "family": device.get("family", "unknown"),
+                "comparability_class": device["comparability_class"],
+                "global_score": scores["global_score"],
+                "coverage": scores["coverage"],
+                "categories": scores["categories"],
+            }
+        )
+
+    common_categories = sorted(
+        {reference_metrics[name]["category"] for name in common_names}
+    )
+    return {
+        "schema_version": 1,
+        "comparison_model": "common-metrics-reference-index-v1",
+        "reference_profile": reference_profile.get("profile_id", "unnamed"),
+        "reference_class": reference_profile.get("comparability_class"),
+        "common_categories": common_categories,
+        "common_metrics": sorted(common_names),
+        "coverage": round(
+            sum(CATEGORY_WEIGHTS[category] for category in common_categories)
+            / sum(CATEGORY_WEIGHTS.values()),
+            4,
+        ),
+        "results": scored_results,
+        "interpretation": (
+            "All devices use the same reference and the same intersection of stable "
+            "metrics. This enables cross-class comparison for these workloads only; "
+            "it does not make unsupported categories equivalent."
         ),
     }
 

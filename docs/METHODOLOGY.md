@@ -17,14 +17,15 @@ Metric records use stable names, units, direction (`higher` or `lower`), status 
 - The host collector combines three complete suite repetitions from one firmware session by default, using the median of repetition-level metric values and recording variation across repetitions.
 - Metrics with more than 25% within-run or run-to-run variation are excluded from calibration and scoring; reports list excluded unstable metrics.
 - Calibration profiles are captured from completed physical runs and store the exact metric values, units, target class, and reference device metadata.
-- A metric is scored only when both the run and profile have matching name, category, direction, and class.
+- The regular score command requires a matching `comparability_class` and matching metric name, category, direction, and unit.
+- The explicit cross-board compare command uses one measured profile and only the stable metric intersection shared by every supplied run. All compared boards therefore have the same scoring categories and coverage.
 - Higher-is-better metric index: `observed / reference × 100`.
 - Lower-is-better metric index: `reference / observed × 100`.
 - Category score: arithmetic mean of scored metric indices in that category.
 - Global score: weighted mean of available category scores, normalized by the sum of available category weights.
 - Coverage is the sum of available category weights divided by 100%.
 
-Indices are intentionally not capped at 100. A score of 100 means the device matches the selected measured profile, not that it is at a theoretical or industry maximum. Comparing results across different profiles or classes is invalid.
+Indices are intentionally not capped at 100. A score of 100 means the device matches the selected measured profile, not that it is at a theoretical or industry maximum. A cross-board index is meaningful only for its declared common workloads and reference. Published internet results from a different benchmark, compiler configuration, or workload are not interchangeable with this suite's profile.
 
 ## Environmental controls
 

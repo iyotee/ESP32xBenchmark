@@ -3,8 +3,18 @@ import json
 import pytest
 
 from esp32_benchmark.collector import aggregate_runs
-from esp32_benchmark.reporting import write_csv_report, write_html_report, write_json_report
-from esp32_benchmark.scoring import make_reference_profile, score_result
+from esp32_benchmark.reporting import (
+    write_comparison_csv,
+    write_comparison_html,
+    write_csv_report,
+    write_html_report,
+    write_json_report,
+)
+from esp32_benchmark.scoring import (
+    compare_results,
+    make_reference_profile,
+    score_result,
+)
 
 
 @pytest.fixture
@@ -78,6 +88,57 @@ def test_score_obeys_metric_direction_and_rejects_cross_class_comparisons(result
     profile["comparability_class"] = "wifi6_802154"
     with pytest.raises(ValueError, match="same comparability_class"):
         score_result(result, profile)
+
+
+def test_cross_class_comparison_scores_the_same_common_categories(result):
+    profile = make_reference_profile(result, "classic-anchor")
+    candidate = {
+        **result,
+        "device": {
+            **result["device"],
+            "target": "ESP8266 test",
+            "family": "ESP8266",
+            "comparability_class": "esp8266_wifi",
+        },
+        "metrics": [
+            {
+                **result["metrics"][0],
+                "value": 10.0,
+            }
+        ],
+    }
+
+    comparison = compare_results([result, candidate], profile)
+
+    assert comparison["common_metrics"] == ["integer_mix_miter_s"]
+    assert comparison["common_categories"] == ["cpu"]
+    assert comparison["coverage"] == pytest.approx(0.20)
+    assert [item["global_score"] for item in comparison["results"]] == [100.0, 50.0]
+    assert [item["coverage"] for item in comparison["results"]] == [0.2, 0.2]
+
+
+def test_cross_class_comparison_reports_share_csv_and_html(tmp_path, result):
+    profile = make_reference_profile(result, "classic-anchor")
+    comparison = compare_results(
+        [
+            result,
+            {
+                **result,
+                "device": {
+                    **result["device"],
+                    "comparability_class": "esp8266_wifi",
+                },
+                "metrics": [result["metrics"][0]],
+            },
+        ],
+        profile,
+    )
+
+    csv_path = write_comparison_csv(comparison, tmp_path / "comparison.csv")
+    html_path = write_comparison_html(comparison, tmp_path / "comparison.html")
+
+    assert "global_score" in csv_path.read_text(encoding="utf-8")
+    assert "Common index" in html_path.read_text(encoding="utf-8")
 
 
 def test_external_power_measurement_contributes_to_global_score(result):

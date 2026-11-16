@@ -9,8 +9,14 @@ from pathlib import Path
 from typing import Any
 
 from .collector import collect_serial_runs
-from .reporting import write_csv_report, write_html_report, write_json_report
-from .scoring import make_reference_profile, score_result
+from .reporting import (
+    write_comparison_csv,
+    write_comparison_html,
+    write_csv_report,
+    write_html_report,
+    write_json_report,
+)
+from .scoring import compare_results, make_reference_profile, score_result
 
 
 def _read_json(path: str | Path) -> dict[str, Any]:
@@ -79,6 +85,13 @@ def main() -> None:
     score.add_argument("--output-dir", type=Path, default=Path("artifacts"))
     score.add_argument("--supplement", type=Path, help="JSON file with peer/instrument metric records.")
 
+    compare = subparsers.add_parser(
+        "compare", help="Compare multiple boards against one reference using common metrics."
+    )
+    compare.add_argument("--reference", type=Path, required=True)
+    compare.add_argument("--results", type=Path, nargs="+", required=True)
+    compare.add_argument("--output-dir", type=Path, default=Path("artifacts/comparison"))
+
     args = parser.parse_args()
     try:
         if args.command == "capture":
@@ -108,6 +121,24 @@ def main() -> None:
             print(f"Global benchmark index: {result['scores']['global_score']}")
             print(f"Coverage: {result['scores']['coverage']:.0%}")
             print(f"Scored report written to {args.output_dir.resolve()}")
+        elif args.command == "compare":
+            comparison = compare_results(
+                [_read_json(path) for path in args.results],
+                _read_json(args.reference),
+            )
+            comparison["source_files"] = [str(path) for path in args.results]
+            args.output_dir.mkdir(parents=True, exist_ok=True)
+            write_json_report(comparison, args.output_dir / "comparison.json")
+            write_comparison_csv(comparison, args.output_dir / "comparison.csv")
+            write_comparison_html(comparison, args.output_dir / "comparison.html")
+            print(f"Common reference: {comparison['reference_profile']}")
+            print(f"Common coverage: {comparison['coverage']:.0%}")
+            for result in comparison["results"]:
+                print(
+                    f"{result['target']}: {result['global_score']:.2f} "
+                    f"({result['comparability_class']})"
+                )
+            print(f"Comparison reports written to {args.output_dir.resolve()}")
     except (OSError, ValueError, RuntimeError, TimeoutError, subprocess.CalledProcessError) as error:
         print(f"error: {error}", file=sys.stderr)
         raise SystemExit(1) from error

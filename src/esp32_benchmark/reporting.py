@@ -135,3 +135,93 @@ Categories excluded: {html.escape(excluded)}.</p>
 """
     output.write_text(html_content, encoding="utf-8")
     return output
+
+
+def write_comparison_csv(
+    comparison: dict[str, Any], output_path: str | Path
+) -> Path:
+    output = Path(output_path)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    categories = comparison.get("common_categories", [])
+    with output.open("w", newline="", encoding="utf-8") as file:
+        writer = csv.writer(file)
+        writer.writerow(
+            [
+                "target",
+                "family",
+                "comparability_class",
+                "global_score",
+                "coverage",
+                *categories,
+            ]
+        )
+        for result in comparison.get("results", []):
+            category_scores = result.get("categories", {})
+            writer.writerow(
+                [
+                    result.get("target", ""),
+                    result.get("family", ""),
+                    result.get("comparability_class", ""),
+                    result.get("global_score", ""),
+                    result.get("coverage", ""),
+                    *[
+                        category_scores.get(category, {}).get("score", "")
+                        for category in categories
+                    ],
+                ]
+            )
+    return output
+
+
+def write_comparison_html(
+    comparison: dict[str, Any], output_path: str | Path
+) -> Path:
+    output = Path(output_path)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    categories = comparison.get("common_categories", [])
+    header = "".join(f"<th>{html.escape(category)}</th>" for category in categories)
+    rows = []
+    for result in comparison.get("results", []):
+        category_scores = result.get("categories", {})
+        category_cells = "".join(
+            "<td>{:.2f}</td>".format(category_scores[category]["score"])
+            for category in categories
+        )
+        rows.append(
+            "<tr><td>{}</td><td>{}</td><td>{}</td><td>{:.2f}</td>"
+            "<td>{:.0%}</td>{}</tr>".format(
+                html.escape(str(result.get("target", "unknown"))),
+                html.escape(str(result.get("family", "unknown"))),
+                html.escape(str(result.get("comparability_class", "unknown"))),
+                result.get("global_score", 0.0),
+                result.get("coverage", 0.0),
+                category_cells,
+            )
+        )
+    metric_list = ", ".join(
+        html.escape(name) for name in comparison.get("common_metrics", [])
+    )
+    content = f"""<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ESP32xBenchmark comparison</title>
+<style>
+body{{font:16px system-ui,sans-serif;max-width:1100px;margin:2rem auto;padding:0 1rem;background:#0b1220;color:#e5edf8}}
+article{{background:#121d30;border:1px solid #293953;border-radius:12px;padding:1rem;margin:1rem 0}}
+h1,h2,th{{color:#8ed8ff}} table{{border-collapse:collapse;width:100%}}
+th,td{{padding:.65rem;text-align:left;border-bottom:1px solid #293953}}
+.score{{font-size:1.15rem;font-weight:700}} .muted{{color:#adbbcf}}
+</style></head>
+<body><h1>ESP32xBenchmark cross-board comparison</h1>
+<article><p>Reference: <b>{html.escape(str(comparison.get("reference_profile", "unknown")))}</b>
+({html.escape(str(comparison.get("reference_class", "unknown")))}).
+Common coverage: {comparison.get("coverage", 0):.0%}.</p>
+<p>Common measured metrics: {metric_list}</p>
+<p class="muted">{html.escape(str(comparison.get("interpretation", "")))}</p></article>
+<article><table><thead><tr><th>Target</th><th>Family</th><th>Class</th>
+<th>Common index</th><th>Coverage</th>{header}</tr></thead>
+<tbody>{"".join(rows)}</tbody></table></article>
+</body></html>
+"""
+    output.write_text(content, encoding="utf-8")
+    return output

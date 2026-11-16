@@ -1,0 +1,235 @@
+{
+  "schema_version": 1,
+  "comparison_model": "common-metrics-reference-index-v1",
+  "reference_profile": "esp32-classic-v1",
+  "reference_class": "classic_wifi_ble",
+  "common_categories": [
+    "cpu",
+    "memory",
+    "peripherals"
+  ],
+  "common_metrics": [
+    "flash_read_mib_s",
+    "float_mix_miter_s",
+    "gpio_transitions_s",
+    "integer_mix_miter_s",
+    "sram_read_mib_s",
+    "sram_write_mib_s"
+  ],
+  "coverage": 0.48,
+  "results": [
+    {
+      "target": "ESP32-D0WD-V3",
+      "family": "esp32",
+      "comparability_class": "classic_wifi_ble",
+      "global_score": 100.0,
+      "coverage": 0.48,
+      "categories": {
+        "cpu": {
+          "score": 100.0,
+          "weight": 0.2,
+          "metrics": [
+            {
+              "name": "integer_mix_miter_s",
+              "value": 100.0,
+              "observed": 29.8864,
+              "reference": 29.8864,
+              "unit": "Miter/s"
+            },
+            {
+              "name": "float_mix_miter_s",
+              "value": 100.0,
+              "observed": 8.2449,
+              "reference": 8.2449,
+              "unit": "Miter/s"
+            }
+          ]
+        },
+        "memory": {
+          "score": 100.01,
+          "weight": 0.18,
+          "metrics": [
+            {
+              "name": "sram_write_mib_s",
+              "value": 100.0,
+              "observed": 25.3338,
+              "reference": 25.3338,
+              "unit": "MiB/s"
+            },
+            {
+              "name": "sram_read_mib_s",
+              "value": 100.0,
+              "observed": 19.0006,
+              "reference": 19.0006,
+              "unit": "MiB/s"
+            },
+            {
+              "name": "flash_read_mib_s",
+              "value": 100.03,
+              "observed": 8.309,
+              "reference": 8.3068,
+              "unit": "MiB/s"
+            }
+          ]
+        },
+        "peripherals": {
+          "score": 100.0,
+          "weight": 0.1,
+          "metrics": [
+            {
+              "name": "gpio_transitions_s",
+              "value": 100.0,
+              "observed": 3541578.1272,
+              "reference": 3541578.1272,
+              "unit": "transitions/s"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "target": "ESP32-C3",
+      "family": "esp32c3",
+      "comparability_class": "low_cost_wifi_ble",
+      "global_score": 58.61,
+      "coverage": 0.48,
+      "categories": {
+        "cpu": {
+          "score": 20.53,
+          "weight": 0.2,
+          "metrics": [
+            {
+              "name": "integer_mix_miter_s",
+              "value": 38.0,
+              "observed": 11.3574,
+              "reference": 29.8864,
+              "unit": "Miter/s"
+            },
+            {
+              "name": "float_mix_miter_s",
+              "value": 3.06,
+              "observed": 0.2523,
+              "reference": 8.2449,
+              "unit": "Miter/s"
+            }
+          ]
+        },
+        "memory": {
+          "score": 98.84,
+          "weight": 0.18,
+          "metrics": [
+            {
+              "name": "sram_write_mib_s",
+              "value": 74.82,
+              "observed": 18.9541,
+              "reference": 25.3338,
+              "unit": "MiB/s"
+            },
+            {
+              "name": "sram_read_mib_s",
+              "value": 88.68,
+              "observed": 16.8492,
+              "reference": 19.0006,
+              "unit": "MiB/s"
+            },
+            {
+              "name": "flash_read_mib_s",
+              "value": 133.03,
+              "observed": 11.0502,
+              "reference": 8.3068,
+              "unit": "MiB/s"
+            }
+          ]
+        },
+        "peripherals": {
+          "score": 62.35,
+          "weight": 0.1,
+          "metrics": [
+            {
+              "name": "gpio_transitions_s",
+              "value": 62.35,
+              "observed": 2208187.961,
+              "reference": 3541578.1272,
+              "unit": "transitions/s"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "target": "ESP8266EX",
+      "family": "esp8266",
+      "comparability_class": "esp8266_wifi",
+      "global_score": 22.67,
+      "coverage": 0.48,
+      "categories": {
+        "cpu": {
+          "score": 10.04,
+          "weight": 0.2,
+          "metrics": [
+            {
+              "name": "integer_mix_miter_s",
+              "value": 17.84,
+              "observed": 5.3303,
+              "reference": 29.8864,
+              "unit": "Miter/s"
+            },
+            {
+              "name": "float_mix_miter_s",
+              "value": 2.25,
+              "observed": 0.1856,
+              "reference": 8.2449,
+              "unit": "Miter/s"
+            }
+          ]
+        },
+        "memory": {
+          "score": 40.43,
+          "weight": 0.18,
+          "metrics": [
+            {
+              "name": "sram_write_mib_s",
+              "value": 33.46,
+              "observed": 8.4756,
+              "reference": 25.3338,
+              "unit": "MiB/s"
+            },
+            {
+              "name": "sram_read_mib_s",
+              "value": 30.88,
+              "observed": 5.8682,
+              "reference": 19.0006,
+              "unit": "MiB/s"
+            },
+            {
+              "name": "flash_read_mib_s",
+              "value": 56.95,
+              "observed": 4.7309,
+              "reference": 8.3068,
+              "unit": "MiB/s"
+            }
+          ]
+        },
+        "peripherals": {
+          "score": 15.96,
+          "weight": 0.1,
+          "metrics": [
+            {
+              "name": "gpio_transitions_s",
+              "value": 15.96,
+              "observed": 565335.866,
+              "reference": 3541578.1272,
+              "unit": "transitions/s"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "interpretation": "All devices use the same reference and the same intersection of stable metrics. This enables cross-class comparison for these workloads only; it does not make unsupported categories equivalent.",
+  "source_files": [
+    "samples\\reference_profiles\\esp32-classic-v1-verification\\results.json",
+    "samples\\reference_profiles\\esp32-c3-super-mini-v1-verification\\results.json",
+    "samples\\reference_profiles\\esp8266-d1-mini-v1-verification\\results.json"
+  ]
+}

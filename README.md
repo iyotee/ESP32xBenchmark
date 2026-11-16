@@ -1,6 +1,6 @@
 # ESP32xBenchmark
 
-ESP32xBenchmark is a reproducible, hardware-measured benchmark suite for ESP32-family and ESP8266 development boards. The firmware emits structured serial records; the host collector aggregates three complete suite repetitions by default, creates JSON/CSV/HTML reports, and calculates a weighted global index against a same-class calibration profile.
+ESP32xBenchmark is a reproducible, hardware-measured benchmark suite for ESP32-family and ESP8266 development boards. The firmware emits structured serial records; the host collector aggregates three complete suite repetitions by default, creates JSON/CSV/HTML reports, and calculates weighted reference indices.
 
 > **This is not a simulated benchmark.** The firmware reports real measurements. Categories that need unavailable hardware or peers are marked skipped and excluded from the score.
 
@@ -55,6 +55,16 @@ To score a previously captured run:
 python -m esp32_benchmark.cli score artifacts\candidate\results.json --reference artifacts\reference_profile.json --output-dir artifacts\scored
 ```
 
+To compare different board families, provide one shared reference and all captured runs. The command finds the stable metrics supported by every input, scores every board against the same reference, and uses the same categories and coverage for the whole table:
+
+```powershell
+python -m esp32_benchmark.cli compare --reference samples\reference_profiles\esp32-classic-v1.json --results samples\reference_profiles\esp32-classic-v1-verification\results.json samples\reference_profiles\esp32-c3-super-mini-v1-verification\results.json samples\reference_profiles\esp8266-d1-mini-v1-verification\results.json --output-dir artifacts\board-comparison
+```
+
+With the current classic-ESP32 anchor, the common CPU, memory, and GPIO comparison scores are approximately 100.00 for the classic ESP32, 58.61 for the C3 Super Mini, and 22.67 for the Wemos D1 mini, all at 48% coverage. These are provisional reference indices, not universal percentages. When an S3 N16R8 is physically tested with this suite, its measured profile can replace the anchor for a new comparison. Results from unrelated internet benchmarks cannot serve as this suite's reference unless the exact workload, units, compiler, and measurement procedure match.
+
+The current comparison is available as [HTML](samples/comparisons/esp32-classic-anchor-v1/comparison.html), [CSV](samples/comparisons/esp32-classic-anchor-v1/comparison.csv), and [JSON](samples/comparisons/esp32-classic-anchor-v1/comparison.json).
+
 External probes and peer tests can add real measurements with a JSON supplement such as:
 
 ```json
@@ -90,7 +100,7 @@ The score is a **reference index**, not a fabricated universal percentage:
 
 Each measured metric is compared to the same metric in a calibration run. The host aggregates repeated suite medians from one firmware session and computes variation across repetitions. For higher-is-better metrics, its index is `observed / reference × 100`; for lower-is-better metrics, it is `reference / observed × 100`. Category scores are the arithmetic mean of their included metric indices. The global index is the weighted mean of available category scores, renormalized over available weights. The reference run scores 100; scores can exceed 100 and are intentionally not capped.
 
-Every report includes **coverage**. Metrics with more than 25% within-run variation are excluded and listed as unstable; missing categories are excluded rather than guessed. Comparisons are rejected when the target's `comparability_class` differs from the profile's class. Calibrate a new reference per class; do not compare a classic ESP32 profile against an ESP32-C6 or P4.
+Every report includes **coverage**. Metrics with more than 25% within-run variation are excluded and listed as unstable; missing categories are excluded rather than guessed. The regular `score` command rejects results whose `comparability_class` differs from the profile. The explicit `compare` command permits cross-class comparison only for the stable metric intersection shared by every supplied run; categories outside that intersection are excluded for all boards. Its result is meaningful only for those shared workloads and the selected measured reference.
 
 Calibration is only as good as the reference run. Use stable power, clock, build flags, ambient conditions, and test fixtures, and preserve the profile with the raw run. A calibration run is a project baseline, not a manufacturer specification or an industry-certified result.
 
