@@ -1,0 +1,622 @@
+{
+  "schema_version": 1,
+  "run_id": "37891a3b",
+  "run_count": 3,
+  "device": {
+    "target": "ESP32-D0WD-V3",
+    "family": "esp32",
+    "architecture": "Xtensa",
+    "firmware_version": "0.2.0",
+    "comparability_class": "classic_wifi_ble",
+    "cores": 2,
+    "cpu_mhz": 240,
+    "flash_bytes": 4194304,
+    "psram_bytes": 0,
+    "heap_free_bytes": 285972,
+    "sdk_version": "v5.5.5",
+    "wifi_supported": true,
+    "ble_supported": true
+  },
+  "metrics": [
+    {
+      "type": "metric",
+      "category": "cpu",
+      "name": "integer_mix_miter_s",
+      "value": 29.8864,
+      "median": 29.8864,
+      "min": 29.8864,
+      "max": 29.8864,
+      "stdev_pct": 0.03,
+      "unit": "Miter/s",
+      "direction": "higher",
+      "status": "ok",
+      "samples": 15,
+      "within_run_stdev_pct": 0.03,
+      "between_run_stdev_pct": 0.0
+    },
+    {
+      "type": "metric",
+      "category": "cpu",
+      "name": "float_mix_miter_s",
+      "value": 8.2449,
+      "median": 8.2449,
+      "min": 8.2449,
+      "max": 8.2449,
+      "stdev_pct": 0.03,
+      "unit": "Miter/s",
+      "direction": "higher",
+      "status": "ok",
+      "samples": 15,
+      "within_run_stdev_pct": 0.03,
+      "between_run_stdev_pct": 0.0
+    },
+    {
+      "type": "metric",
+      "category": "memory",
+      "name": "sram_write_mib_s",
+      "value": 25.3344,
+      "median": 25.3344,
+      "min": 25.3344,
+      "max": 25.3344,
+      "stdev_pct": 0.01,
+      "unit": "MiB/s",
+      "direction": "higher",
+      "status": "ok",
+      "samples": 15,
+      "within_run_stdev_pct": 0.01,
+      "between_run_stdev_pct": 0.0
+    },
+    {
+      "type": "metric",
+      "category": "memory",
+      "name": "sram_read_mib_s",
+      "value": 19.0006,
+      "median": 19.0006,
+      "min": 19.0006,
+      "max": 19.0006,
+      "stdev_pct": 0.0,
+      "unit": "MiB/s",
+      "direction": "higher",
+      "status": "ok",
+      "samples": 15,
+      "within_run_stdev_pct": 0.0,
+      "between_run_stdev_pct": 0.0
+    },
+    {
+      "type": "metric",
+      "category": "memory",
+      "name": "allocation_latency_us",
+      "value": 20.4141,
+      "median": 20.4141,
+      "min": 10.4375,
+      "max": 20.4141,
+      "stdev_pct": 27.521409102716667,
+      "unit": "us/op",
+      "direction": "lower",
+      "status": "ok",
+      "samples": 15,
+      "within_run_stdev_pct": 0.13,
+      "between_run_stdev_pct": 27.521409102716667
+    },
+    {
+      "type": "metric",
+      "category": "memory",
+      "name": "psram_write_mib_s",
+      "value": null,
+      "unit": "",
+      "direction": "higher",
+      "status": "skipped",
+      "reason": "psram_not_present"
+    },
+    {
+      "type": "metric",
+      "category": "memory",
+      "name": "flash_read_mib_s",
+      "value": 8.3056,
+      "median": 8.3056,
+      "min": 8.3034,
+      "max": 8.3068,
+      "stdev_pct": 0.3,
+      "unit": "MiB/s",
+      "direction": "higher",
+      "status": "ok",
+      "samples": 15,
+      "within_run_stdev_pct": 0.3,
+      "between_run_stdev_pct": 0.016952064217844363
+    },
+    {
+      "type": "metric",
+      "category": "peripherals",
+      "name": "gpio_transitions_s",
+      "value": 3541452.7039,
+      "median": 3541452.7039,
+      "min": 3541452.7039,
+      "max": 3541578.1272,
+      "stdev_pct": 0.03,
+      "unit": "transitions/s",
+      "direction": "higher",
+      "status": "ok",
+      "samples": 15,
+      "within_run_stdev_pct": 0.03,
+      "between_run_stdev_pct": 0.001669496040095833
+    },
+    {
+      "type": "metric",
+      "category": "rtos",
+      "name": "task_handoff_us",
+      "value": 32.011,
+      "median": 32.011,
+      "min": 31.8192,
+      "max": 32.011,
+      "stdev_pct": 0.2830162406805899,
+      "unit": "us/round_trip",
+      "direction": "lower",
+      "status": "ok",
+      "samples": 15,
+      "within_run_stdev_pct": 0.04,
+      "between_run_stdev_pct": 0.2830162406805899
+    },
+    {
+      "type": "metric",
+      "category": "rtos",
+      "name": "queue_roundtrip_us",
+      "value": 3.5321,
+      "median": 3.5321,
+      "min": 3.5319,
+      "max": 3.5321,
+      "stdev_pct": 0.04,
+      "unit": "us/op",
+      "direction": "lower",
+      "status": "ok",
+      "samples": 15,
+      "within_run_stdev_pct": 0.04,
+      "between_run_stdev_pct": 0.0026693095806437075
+    },
+    {
+      "type": "metric",
+      "category": "connectivity",
+      "name": "wifi_scan_ms",
+      "value": 3201.377,
+      "unit": "ms",
+      "direction": "lower",
+      "status": "informational",
+      "samples": 1
+    },
+    {
+      "type": "metric",
+      "category": "connectivity",
+      "name": "wifi_visible_networks",
+      "value": 8.0,
+      "unit": "networks",
+      "direction": "higher",
+      "status": "informational",
+      "samples": 1
+    },
+    {
+      "type": "metric",
+      "category": "connectivity",
+      "name": "wifi_tcp_udp_mbit_s",
+      "value": null,
+      "unit": "",
+      "direction": "higher",
+      "status": "skipped",
+      "reason": "iperf_peer_and_wifi_credentials_not_configured"
+    },
+    {
+      "type": "metric",
+      "category": "connectivity",
+      "name": "ble_throughput_kbit_s",
+      "value": null,
+      "unit": "",
+      "direction": "higher",
+      "status": "skipped",
+      "reason": "ble_peer_test_not_configured"
+    },
+    {
+      "type": "metric",
+      "category": "connectivity",
+      "name": "thread_zigbee_latency_ms",
+      "value": null,
+      "unit": "",
+      "direction": "higher",
+      "status": "skipped",
+      "reason": "802154_peer_test_not_configured"
+    },
+    {
+      "type": "metric",
+      "category": "power",
+      "name": "active_current_ma",
+      "value": null,
+      "unit": "",
+      "direction": "higher",
+      "status": "skipped",
+      "reason": "external_power_analyzer_required; current_is_not_estimated"
+    },
+    {
+      "type": "metric",
+      "category": "power",
+      "name": "deep_sleep_current_ua",
+      "value": null,
+      "unit": "",
+      "direction": "higher",
+      "status": "skipped",
+      "reason": "external_power_analyzer_required"
+    },
+    {
+      "type": "metric",
+      "category": "power",
+      "name": "wake_latency_ms",
+      "value": null,
+      "unit": "",
+      "direction": "higher",
+      "status": "skipped",
+      "reason": "external_power_analyzer_required"
+    },
+    {
+      "type": "metric",
+      "category": "ai",
+      "name": "inference_latency_ms",
+      "value": null,
+      "unit": "",
+      "direction": "higher",
+      "status": "skipped",
+      "reason": "model_and_inference_runtime_not_configured"
+    }
+  ],
+  "run_summaries": [
+    {
+      "run_id": "37891a3b",
+      "captured_at": "2026-11-16T16:08:47Z",
+      "metrics": [
+        {
+          "name": "integer_mix_miter_s",
+          "value": 29.8864
+        },
+        {
+          "name": "float_mix_miter_s",
+          "value": 8.2449
+        },
+        {
+          "name": "sram_write_mib_s",
+          "value": 25.3344
+        },
+        {
+          "name": "sram_read_mib_s",
+          "value": 19.0006
+        },
+        {
+          "name": "allocation_latency_us",
+          "value": 10.4375
+        },
+        {
+          "name": "psram_write_mib_s",
+          "value": null
+        },
+        {
+          "name": "flash_read_mib_s",
+          "value": 8.3056
+        },
+        {
+          "name": "gpio_transitions_s",
+          "value": 3541578.1272
+        },
+        {
+          "name": "task_handoff_us",
+          "value": 31.8192
+        },
+        {
+          "name": "queue_roundtrip_us",
+          "value": 3.5319
+        },
+        {
+          "name": "wifi_scan_ms",
+          "value": 3201.377
+        },
+        {
+          "name": "wifi_visible_networks",
+          "value": 8.0
+        },
+        {
+          "name": "wifi_tcp_udp_mbit_s",
+          "value": null
+        },
+        {
+          "name": "ble_throughput_kbit_s",
+          "value": null
+        },
+        {
+          "name": "thread_zigbee_latency_ms",
+          "value": null
+        },
+        {
+          "name": "active_current_ma",
+          "value": null
+        },
+        {
+          "name": "deep_sleep_current_ua",
+          "value": null
+        },
+        {
+          "name": "wake_latency_ms",
+          "value": null
+        },
+        {
+          "name": "inference_latency_ms",
+          "value": null
+        }
+      ]
+    },
+    {
+      "run_id": "06ca269f",
+      "captured_at": "2026-11-16T16:09:07Z",
+      "metrics": [
+        {
+          "name": "integer_mix_miter_s",
+          "value": 29.8864
+        },
+        {
+          "name": "float_mix_miter_s",
+          "value": 8.2449
+        },
+        {
+          "name": "sram_write_mib_s",
+          "value": 25.3344
+        },
+        {
+          "name": "sram_read_mib_s",
+          "value": 19.0006
+        },
+        {
+          "name": "allocation_latency_us",
+          "value": 20.4141
+        },
+        {
+          "name": "psram_write_mib_s",
+          "value": null
+        },
+        {
+          "name": "flash_read_mib_s",
+          "value": 8.3068
+        },
+        {
+          "name": "gpio_transitions_s",
+          "value": 3541452.7039
+        },
+        {
+          "name": "task_handoff_us",
+          "value": 32.011
+        },
+        {
+          "name": "queue_roundtrip_us",
+          "value": 3.5321
+        },
+        {
+          "name": "wifi_scan_ms",
+          "value": 3201.133
+        },
+        {
+          "name": "wifi_visible_networks",
+          "value": 8.0
+        },
+        {
+          "name": "wifi_tcp_udp_mbit_s",
+          "value": null
+        },
+        {
+          "name": "ble_throughput_kbit_s",
+          "value": null
+        },
+        {
+          "name": "thread_zigbee_latency_ms",
+          "value": null
+        },
+        {
+          "name": "active_current_ma",
+          "value": null
+        },
+        {
+          "name": "deep_sleep_current_ua",
+          "value": null
+        },
+        {
+          "name": "wake_latency_ms",
+          "value": null
+        },
+        {
+          "name": "inference_latency_ms",
+          "value": null
+        }
+      ]
+    },
+    {
+      "run_id": "033a511c",
+      "captured_at": "2026-11-16T16:09:28Z",
+      "metrics": [
+        {
+          "name": "integer_mix_miter_s",
+          "value": 29.8864
+        },
+        {
+          "name": "float_mix_miter_s",
+          "value": 8.2449
+        },
+        {
+          "name": "sram_write_mib_s",
+          "value": 25.3344
+        },
+        {
+          "name": "sram_read_mib_s",
+          "value": 19.0006
+        },
+        {
+          "name": "allocation_latency_us",
+          "value": 20.4141
+        },
+        {
+          "name": "psram_write_mib_s",
+          "value": null
+        },
+        {
+          "name": "flash_read_mib_s",
+          "value": 8.3034
+        },
+        {
+          "name": "gpio_transitions_s",
+          "value": 3541452.7039
+        },
+        {
+          "name": "task_handoff_us",
+          "value": 32.011
+        },
+        {
+          "name": "queue_roundtrip_us",
+          "value": 3.5321
+        },
+        {
+          "name": "wifi_scan_ms",
+          "value": 3000.62
+        },
+        {
+          "name": "wifi_visible_networks",
+          "value": 7.0
+        },
+        {
+          "name": "wifi_tcp_udp_mbit_s",
+          "value": null
+        },
+        {
+          "name": "ble_throughput_kbit_s",
+          "value": null
+        },
+        {
+          "name": "thread_zigbee_latency_ms",
+          "value": null
+        },
+        {
+          "name": "active_current_ma",
+          "value": null
+        },
+        {
+          "name": "deep_sleep_current_ua",
+          "value": null
+        },
+        {
+          "name": "wake_latency_ms",
+          "value": null
+        },
+        {
+          "name": "inference_latency_ms",
+          "value": null
+        }
+      ]
+    }
+  ],
+  "captured_at": "2026-11-16T16:09:28Z",
+  "host": {
+    "collector_version": "0.2.0",
+    "python_version": "3.12.10",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "platformio_environment": "esp32dev",
+    "serial_baud": 115200
+  },
+  "scores": {
+    "reference_profile": "esp32-classic-v1",
+    "score_model": "weighted-category-index-v1",
+    "global_score": 100.0,
+    "score_scale": "reference=100; values are not capped",
+    "coverage": 0.58,
+    "available_weight": 0.58,
+    "categories": {
+      "cpu": {
+        "score": 100.0,
+        "weight": 0.2,
+        "metrics": [
+          {
+            "name": "integer_mix_miter_s",
+            "value": 100.0,
+            "observed": 29.8864,
+            "reference": 29.8864,
+            "unit": "Miter/s"
+          },
+          {
+            "name": "float_mix_miter_s",
+            "value": 100.0,
+            "observed": 8.2449,
+            "reference": 8.2449,
+            "unit": "Miter/s"
+          }
+        ]
+      },
+      "memory": {
+        "score": 100.0,
+        "weight": 0.18,
+        "metrics": [
+          {
+            "name": "sram_write_mib_s",
+            "value": 100.0,
+            "observed": 25.3344,
+            "reference": 25.3338,
+            "unit": "MiB/s"
+          },
+          {
+            "name": "sram_read_mib_s",
+            "value": 100.0,
+            "observed": 19.0006,
+            "reference": 19.0006,
+            "unit": "MiB/s"
+          },
+          {
+            "name": "flash_read_mib_s",
+            "value": 99.99,
+            "observed": 8.3056,
+            "reference": 8.3068,
+            "unit": "MiB/s"
+          }
+        ]
+      },
+      "peripherals": {
+        "score": 100.0,
+        "weight": 0.1,
+        "metrics": [
+          {
+            "name": "gpio_transitions_s",
+            "value": 100.0,
+            "observed": 3541452.7039,
+            "reference": 3541578.1272,
+            "unit": "transitions/s"
+          }
+        ]
+      },
+      "rtos": {
+        "score": 99.98,
+        "weight": 0.1,
+        "metrics": [
+          {
+            "name": "task_handoff_us",
+            "value": 99.97,
+            "observed": 32.011,
+            "reference": 32.0028,
+            "unit": "us/round_trip"
+          },
+          {
+            "name": "queue_roundtrip_us",
+            "value": 99.99,
+            "observed": 3.5321,
+            "reference": 3.5319,
+            "unit": "us/op"
+          }
+        ]
+      }
+    },
+    "excluded_categories": [
+      "connectivity",
+      "power",
+      "ai"
+    ],
+    "unstable_metrics": [],
+    "unmatched_metrics": [
+      "allocation_latency_us"
+    ],
+    "interpretation": "Power requires an external current monitor; AI/TinyML requires a supported model/runtime. Missing categories are excluded and coverage is reported."
+  }
+}

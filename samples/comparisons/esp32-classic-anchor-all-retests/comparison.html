@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ESP32xBenchmark comparison</title>
+<style>
+body{font:16px system-ui,sans-serif;max-width:1100px;margin:2rem auto;padding:0 1rem;background:#0b1220;color:#e5edf8}
+article{background:#121d30;border:1px solid #293953;border-radius:12px;padding:1rem;margin:1rem 0}
+h1,h2,th{color:#8ed8ff} table{border-collapse:collapse;width:100%}
+th,td{padding:.65rem;text-align:left;border-bottom:1px solid #293953}
+.score{font-size:1.15rem;font-weight:700} .muted{color:#adbbcf}
+</style></head>
+<body><h1>ESP32xBenchmark cross-board comparison</h1>
+<article><p>Reference: <b>esp32-classic-v1</b>
+(classic_wifi_ble).
+Common coverage: 48%.</p>
+<p>Common measured metrics: flash_read_mib_s, float_mix_miter_s, gpio_transitions_s, integer_mix_miter_s, sram_read_mib_s, sram_write_mib_s</p>
+<p class="muted">All devices use the same reference and the same intersection of stable metrics. This enables cross-class comparison for these workloads only; it does not make unsupported categories equivalent.</p></article>
+<article><table><thead><tr><th>Target</th><th>Family</th><th>Class</th>
+<th>Common index</th><th>Coverage</th><th>cpu</th><th>memory</th><th>peripherals</th></tr></thead>
+<tbody><tr><td>ESP32-D0WD-V3</td><td>esp32</td><td>classic_wifi_ble</td><td>100.00</td><td>48%</td><td>100.00</td><td>100.00</td><td>100.00</td></tr><tr><td>ESP32-C3</td><td>esp32c3</td><td>low_cost_wifi_ble</td><td>58.61</td><td>48%</td><td>20.53</td><td>98.84</td><td>62.36</td></tr><tr><td>ESP8266EX</td><td>esp8266</td><td>esp8266_wifi</td><td>22.67</td><td>48%</td><td>10.04</td><td>40.43</td><td>15.96</td></tr><tr><td>ESP8266EX</td><td>esp8266</td><td>esp8266_wifi</td><td>22.67</td><td>48%</td><td>10.04</td><td>40.43</td><td>15.96</td></tr></tbody></table></article>
+</body></html>

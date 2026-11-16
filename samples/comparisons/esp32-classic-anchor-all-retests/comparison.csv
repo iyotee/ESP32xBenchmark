@@ -1,0 +1,5 @@
+target,family,comparability_class,global_score,coverage,cpu,memory,peripherals
+ESP32-D0WD-V3,esp32,classic_wifi_ble,100.0,0.48,100.0,100.0,100.0
+ESP32-C3,esp32c3,low_cost_wifi_ble,58.61,0.48,20.53,98.84,62.36
+ESP8266EX,esp8266,esp8266_wifi,22.67,0.48,10.04,40.43,15.96
+ESP8266EX,esp8266,esp8266_wifi,22.67,0.48,10.04,40.43,15.96

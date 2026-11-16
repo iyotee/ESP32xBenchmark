@@ -58,12 +58,12 @@ python -m esp32_benchmark.cli score artifacts\candidate\results.json --reference
 To compare different board families, provide one shared reference and all captured runs. The command finds the stable metrics supported by every input, scores every board against the same reference, and uses the same categories and coverage for the whole table:
 
 ```powershell
-python -m esp32_benchmark.cli compare --reference samples\reference_profiles\esp32-classic-v1.json --results samples\reference_profiles\esp32-classic-v1-verification\results.json samples\reference_profiles\esp32-c3-super-mini-v1-verification\results.json samples\reference_profiles\esp8266-d1-mini-v1-verification\results.json --output-dir artifacts\board-comparison
+python -m esp32_benchmark.cli compare --reference samples\reference_profiles\esp32-classic-v1.json --results samples\reference_profiles\esp32-classic-v1-retest\results.json samples\reference_profiles\esp32-c3-super-mini-v1-retest\results.json samples\reference_profiles\esp8266-d1-mini-v1-verification\results.json samples\reference_profiles\esp8266-d1-mini-color-variant-v1-run\results.json --output-dir artifacts\board-comparison
 ```
 
-With the current classic-ESP32 anchor, the common CPU, memory, and GPIO comparison scores are approximately 100.00 for the classic ESP32, 58.61 for the C3 Super Mini, and 22.67 for the Wemos D1 mini, all at 48% coverage. These are provisional reference indices, not universal percentages. When an S3 N16R8 is physically tested with this suite, its measured profile can replace the anchor for a new comparison. Results from unrelated internet benchmarks cannot serve as this suite's reference unless the exact workload, units, compiler, and measurement procedure match.
+With the current classic-ESP32 anchor, the common CPU, memory, and GPIO comparison scores are 100.00 for the classic ESP32, 58.61 for the C3 Super Mini, and 22.67 for each of the original and color-variant Wemos D1 mini. All have 48% coverage. These are provisional reference indices, not universal percentages. When an S3 N16R8 is physically tested with this suite, its measured profile can replace the anchor for a new comparison. Results from unrelated internet benchmarks cannot serve as this suite's reference unless the exact workload, units, compiler, and measurement procedure match.
 
-The current comparison is available as [HTML](samples/comparisons/esp32-classic-anchor-v1/comparison.html), [CSV](samples/comparisons/esp32-classic-anchor-v1/comparison.csv), and [JSON](samples/comparisons/esp32-classic-anchor-v1/comparison.json).
+The latest four-board comparison is available as [HTML](samples/comparisons/esp32-classic-anchor-all-retests/comparison.html), [CSV](samples/comparisons/esp32-classic-anchor-all-retests/comparison.csv), and [JSON](samples/comparisons/esp32-classic-anchor-all-retests/comparison.json). Both Wemos entries identify as ESP8266EX; their order matches the original Wemos followed by the color variant.
 
 External probes and peer tests can add real measurements with a JSON supplement such as:
 
