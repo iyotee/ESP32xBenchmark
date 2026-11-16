@@ -11,3 +11,5 @@ python -m esp32_benchmark.cli capture --port COM6 --project-dir platformio_test 
 ```
 
 Only publish a new profile after checking its device metadata, environment, firmware revision, and measurement stability.
+
+The adjacent `esp32-classic-v1-verification` report is a separate three-repetition capture against this calibration. It scored 100.0 with 58% category-weight coverage on the same board. That index is relative to this project's own reference, not a universal performance score; connectivity, power, and AI/TinyML were excluded because the required peer/instrument/model was not configured.

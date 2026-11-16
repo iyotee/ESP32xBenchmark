@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ESP32xBenchmark results</title>
+<style>
+body{font:16px system-ui,sans-serif;max-width:1100px;margin:2rem auto;padding:0 1rem;background:#0b1220;color:#e5edf8}
+article{background:#121d30;border:1px solid #293953;border-radius:12px;padding:1rem;margin:1rem 0}
+h1,h2{color:#8ed8ff} .score{font-size:3rem;font-weight:700} table{border-collapse:collapse;width:100%}
+th,td{padding:.65rem;text-align:left;border-bottom:1px solid #293953} th{color:#8ed8ff}
+small,.muted{color:#adbbcf}
+</style>
+</head>
+<body>
+<h1>ESP32xBenchmark</h1>
+<article><h2>ESP32-D0WD-V3</h2>
+<p>Family: esp32 ·
+Class: classic_wifi_ble ·
+Run: f75b6491</p>
+<div class="score">100.00<small> reference index</small></div>
+<p>Coverage: 58% of configured category weights.
+Reference: esp32-classic-v1.
+Categories excluded: connectivity, power, ai.</p>
+<p class="muted">Reference run = 100. Scores are not capped. Scores are comparable only within the same calibration class and profile.</p>
+</article>
+<article><h2>Category scores</h2><table><thead><tr><th>Category</th><th>Index</th><th>Weight</th></tr></thead><tbody><tr><td>cpu</td><td>100.00</td><td>20%</td></tr><tr><td>memory</td><td>100.01</td><td>18%</td></tr><tr><td>peripherals</td><td>100.00</td><td>10%</td></tr><tr><td>rtos</td><td>100.00</td><td>10%</td></tr></tbody></table></article>
+<article><h2>Raw measurements</h2><table><thead><tr><th>Category</th><th>Metric</th><th>Median</th><th>Min / max / stdev %</th><th>Unit</th><th>Status</th></tr></thead><tbody><tr><td>cpu</td><td>integer_mix_miter_s</td><td>29.8864</td><td>29.8864 / 29.8864 / 0.02%</td><td>Miter/s</td><td>ok</td></tr><tr><td>cpu</td><td>float_mix_miter_s</td><td>8.2449</td><td>8.2449 / 8.2449 / 0.01%</td><td>Miter/s</td><td>ok</td></tr><tr><td>memory</td><td>sram_write_mib_s</td><td>25.3338</td><td>25.3338 / 25.3338 / 0.01%</td><td>MiB/s</td><td>ok</td></tr><tr><td>memory</td><td>sram_read_mib_s</td><td>19.0006</td><td>19.0006 / 19.0006 / 0.0%</td><td>MiB/s</td><td>ok</td></tr><tr><td>memory</td><td>allocation_latency_us</td><td>20.4141</td><td>20.4141 / 20.4141 / 0.09%</td><td>us/op</td><td>ok</td></tr><tr><td>memory</td><td>psram_write_mib_s</td><td>None</td><td>n/a / n/a / n/a%</td><td></td><td>skipped</td></tr><tr><td>memory</td><td>flash_read_mib_s</td><td>8.309</td><td>8.3068 / 8.33 / 0.39%</td><td>MiB/s</td><td>ok</td></tr><tr><td>peripherals</td><td>gpio_transitions_s</td><td>3541578.1272</td><td>3541452.7039 / 3541578.1272 / 0.02%</td><td>transitions/s</td><td>ok</td></tr><tr><td>rtos</td><td>task_handoff_us</td><td>32.0028</td><td>32.0028 / 32.0028 / 0.05%</td><td>us/round_trip</td><td>ok</td></tr><tr><td>rtos</td><td>queue_roundtrip_us</td><td>3.532</td><td>3.5319 / 3.5322 / 0.01%</td><td>us/op</td><td>ok</td></tr><tr><td>connectivity</td><td>wifi_scan_ms</td><td>3401.286</td><td>n/a / n/a / n/a%</td><td>ms</td><td>informational</td></tr><tr><td>connectivity</td><td>wifi_visible_networks</td><td>9.0</td><td>n/a / n/a / n/a%</td><td>networks</td><td>informational</td></tr><tr><td>connectivity</td><td>wifi_tcp_udp_mbit_s</td><td>None</td><td>n/a / n/a / n/a%</td><td></td><td>skipped</td></tr><tr><td>connectivity</td><td>ble_throughput_kbit_s</td><td>None</td><td>n/a / n/a / n/a%</td><td></td><td>skipped</td></tr><tr><td>connectivity</td><td>thread_zigbee_latency_ms</td><td>None</td><td>n/a / n/a / n/a%</td><td></td><td>skipped</td></tr><tr><td>power</td><td>active_current_ma</td><td>None</td><td>n/a / n/a / n/a%</td><td></td><td>skipped</td></tr><tr><td>power</td><td>deep_sleep_current_ua</td><td>None</td><td>n/a / n/a / n/a%</td><td></td><td>skipped</td></tr><tr><td>power</td><td>wake_latency_ms</td><td>None</td><td>n/a / n/a / n/a%</td><td></td><td>skipped</td></tr><tr><td>ai</td><td>inference_latency_ms</td><td>None</td><td>n/a / n/a / n/a%</td><td></td><td>skipped</td></tr></tbody></table></article>
+<article><h2>Scoring exclusions</h2><p>Unstable metrics (&gt;25% variation): None</p><p>Metrics without a matching reference: allocation_latency_us</p></article>
+<p class="muted">Unmeasured categories are not fabricated. Power needs an external current monitor; AI/TinyML needs a supported model/runtime.</p>
+</body>
+</html>

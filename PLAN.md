@@ -32,6 +32,7 @@ Provide reproducible, auditable comparisons across ESP32 families by combining a
 - [x] Compile and run on the connected ESP32 Dev Module; retain a real calibration profile and raw result/report.
 - [x] Verify the second physical run scores against the baseline (96.13 index, 58% category-weight coverage).
 - [x] Reflash firmware 0.2.0 and record three complete physical suite repetitions as the published classic-ESP32 calibration profile.
+- [x] Capture a separate three-repetition physical verification against that profile (100.0 index, 58% coverage; unavailable categories excluded).
 
 ### Phase 3 — broader hardware coverage
 - [x] Add PlatformIO build environments for ESP32, S2, S3, C3, and C6; verify builds for all five targets.
