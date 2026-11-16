@@ -1,0 +1,130 @@
+name: Windows portable release
+
+on:
+  push:
+    tags:
+      - "V*"
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Validate dated version tag
+        shell: pwsh
+        run: |
+          if ($env:GITHUB_REF_NAME -notmatch '^V(\d{4})\.(\d{2})\.(\d{2})\.([1-9]\d*)$') {
+            throw "Release tag must use VYYYY.MM.DD.N, for example V2026.11.16.1."
+          }
+          [void][datetime]::ParseExact(
+            "$($Matches[1]).$($Matches[2]).$($Matches[3])",
+            "yyyy.MM.dd",
+            [System.Globalization.CultureInfo]::InvariantCulture)
+          "VERSION=$($env:GITHUB_REF_NAME.Substring(1))" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+
+      - name: Run .NET tests
+        run: dotnet test windows\ESP32xBenchmark.sln --configuration Release
+
+      - name: Publish portable single-file executable
+        shell: pwsh
+        run: |
+          $publishDirectory = "windows\Esp32Benchmark.Desktop\publish-release"
+          dotnet publish windows\Esp32Benchmark.Desktop\Esp32Benchmark.Desktop.csproj `
+            --configuration Release `
+            -p:PublishProfile=win-x64 `
+            -p:Version=$env:VERSION `
+            -o $publishDirectory
+          if ($LASTEXITCODE -ne 0) {
+            throw "The portable WPF publish failed."
+          }
+
+          $executable = Join-Path $publishDirectory "ESP32xBenchmark.exe"
+          if (-not (Test-Path $executable)) {
+            throw "The portable executable was not produced."
+          }
+          $verification = Start-Process -FilePath $executable `
+            -ArgumentList "--verify-firmware-bundle" -Wait -PassThru
+          if ($verification.ExitCode -ne 0) {
+            throw "The embedded firmware bundle verification failed."
+          }
+          Copy-Item $executable (Join-Path $publishDirectory "ESP32xBenchmark-win-x64.exe")
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: windows/Esp32Benchmark.Desktop/publish-release/ESP32xBenchmark-win-x64.exe
+
+      - name: Prepare latest update manifest
+        shell: pwsh
+        run: |
+          $asset = "windows\Esp32Benchmark.Desktop\publish-release\ESP32xBenchmark-win-x64.exe"
+          $sha256 = (Get-FileHash -Path $asset -Algorithm SHA256).Hash.ToLowerInvariant()
+          $manifest = [ordered]@{
+            version = $env:GITHUB_REF_NAME
+            asset = "ESP32xBenchmark-win-x64.exe"
+            sha256 = $sha256
+          } | ConvertTo-Json
+          [System.IO.File]::WriteAllText(
+            (Join-Path $PWD "latest.json"),
+            $manifest,
+            [System.Text.UTF8Encoding]::new($false))
+
+      - name: Publish latest update manifest to main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: manifest-repository
+
+      - name: Update public manifest
+        shell: pwsh
+        run: |
+          function Convert-ReleaseTagToVersion([string]$tag) {
+            if ($tag -notmatch '^V(\d{4})\.(\d{2})\.(\d{2})\.([1-9]\d*)$') {
+              throw "Invalid dated release tag: $tag"
+            }
+            [void][datetime]::ParseExact(
+              "$($Matches[1]).$($Matches[2]).$($Matches[3])",
+              "yyyy.MM.dd",
+              [System.Globalization.CultureInfo]::InvariantCulture)
+            return [version]::new(
+              [int]$Matches[1], [int]$Matches[2], [int]$Matches[3], [int]$Matches[4])
+          }
+
+          $repo = Join-Path $PWD "manifest-repository"
+          $manifestPath = Join-Path $repo "latest.json"
+          $newVersion = Convert-ReleaseTagToVersion $env:GITHUB_REF_NAME
+          if (Test-Path $manifestPath) {
+            $currentManifest = Get-Content -Path $manifestPath -Raw | ConvertFrom-Json
+            $currentVersion = Convert-ReleaseTagToVersion $currentManifest.version
+            if ($newVersion -le $currentVersion) {
+              Write-Host "The public manifest already points to an equal or newer release."
+              exit 0
+            }
+          }
+
+          Copy-Item (Join-Path $PWD "latest.json") $manifestPath -Force
+          git -C $repo config user.name "github-actions[bot]"
+          git -C $repo config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git -C $repo add latest.json
+          git -C $repo diff --cached --quiet
+          if ($LASTEXITCODE -eq 0) {
+            Write-Host "The latest update manifest is already current."
+            exit 0
+          }
+          git -C $repo commit -m "Update latest Windows release manifest"
+          if ($LASTEXITCODE -ne 0) {
+            throw "Could not commit the update manifest."
+          }
+          git -C $repo push origin HEAD:main
+          if ($LASTEXITCODE -ne 0) {
+            throw "Could not publish the update manifest to main."
+          }

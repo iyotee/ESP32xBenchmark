@@ -4,8 +4,9 @@
                  xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
                  Title="ESP32xBenchmark" Width="1450" Height="920"
                  MinWidth="1120" MinHeight="760" WindowStartupLocation="CenterScreen"
-                 Background="{StaticResource AppBackground}"
-                 Foreground="{StaticResource PrimaryText}">
+                 Background="{DynamicResource AppBackground}"
+                 Foreground="{DynamicResource PrimaryText}"
+                 StateChanged="MainWindow_StateChanged">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="74" />
@@ -13,27 +14,54 @@
             <RowDefinition Height="31" />
         </Grid.RowDefinitions>
 
-        <Border Grid.Row="0" Background="#0E1929" BorderBrush="#1E2D43" BorderThickness="0,0,0,1">
+        <Border Grid.Row="0" Background="{DynamicResource HeaderBackground}"
+                BorderBrush="{DynamicResource PanelBorder}" BorderThickness="0,0,0,1">
             <Grid Margin="24,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                    <Border Width="38" Height="38" CornerRadius="11" Background="#123951" Margin="0,0,13,0">
-                        <TextBlock Text="X" Foreground="#63D7FF" FontSize="18" FontWeight="Bold"
-                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center"
+                            MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
+                    <Border Width="38" Height="38" CornerRadius="11" Background="Transparent" Margin="0,0,13,0">
+                        <Image x:Name="BrandLogo" Width="36" Height="36" Stretch="Uniform"
+                               Source="pack://application:,,,/Assets/logo-header-dark.png"
+                               AutomationProperties.Name="ESP32xBenchmark" />
                     </Border>
                     <StackPanel VerticalAlignment="Center">
                         <TextBlock Text="ESP32xBenchmark" FontSize="18" FontWeight="SemiBold" />
-                        <TextBlock Text="MEASURE · COMPARE · UNDERSTAND" FontSize="9"
-                                   Foreground="{StaticResource SecondaryText}" Margin="1,2,0,0" />
+                        <TextBlock Text="{DynamicResource Text.Tagline}" FontSize="9"
+                                   Foreground="{DynamicResource SecondaryText}" Margin="1,2,0,0" />
                     </StackPanel>
                 </StackPanel>
                 <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                    <Ellipse x:Name="StatusIndicator" Width="8" Height="8" Fill="#78A0C0" Margin="0,0,9,0" />
-                    <TextBlock x:Name="StatusText" Text="Ready" Foreground="{StaticResource SecondaryText}"
-                               VerticalAlignment="Center" FontSize="12" />
+                    <Button x:Name="ThemeToggleButton" Width="36" Height="36" Margin="0,0,8,0"
+                            Style="{StaticResource TitleBarButton}" Click="ThemeToggleButton_Click">
+                        <Grid Width="18" Height="18">
+                            <Path x:Name="ThemeIconPath" Width="18" Height="18" Stretch="Uniform"
+                                  Stroke="{DynamicResource PrimaryText}" StrokeThickness="1.6"
+                                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                                  StrokeLineJoin="Round" Fill="Transparent">
+                                <Path.RenderTransform>
+                                    <RotateTransform x:Name="ThemeIconRotation" CenterX="9" CenterY="9" />
+                                </Path.RenderTransform>
+                            </Path>
+                        </Grid>
+                    </Button>
+                    <ComboBox x:Name="LanguageCombo" Width="220" Height="32" Margin="0,0,16,0"
+                              ToolTip="{DynamicResource Text.Language}"
+                              IsEditable="True" IsTextSearchEnabled="True"
+                              SelectionChanged="LanguageCombo_SelectionChanged" />
+                    <Ellipse x:Name="StatusIndicator" Width="8" Height="8"
+                             Fill="{DynamicResource StatusNeutralBrush}" Margin="0,0,9,0" />
+                    <TextBlock x:Name="StatusText" Text="{DynamicResource Text.Ready}" Foreground="{DynamicResource SecondaryText}"
+                               VerticalAlignment="Center" FontSize="12" Margin="0,0,16,0" />
+                    <Button Content="−" ToolTip="{DynamicResource Text.Minimize}" Style="{StaticResource TitleBarButton}"
+                            Click="MinimizeWindow_Click" />
+                    <Button x:Name="MaximizeButton" Content="□" ToolTip="{DynamicResource Text.Maximize}"
+                            Style="{StaticResource TitleBarButton}" Click="ToggleMaximizeWindow_Click" />
+                    <Button Content="×" ToolTip="{DynamicResource Text.Close}" Style="{StaticResource CloseWindowButton}"
+                            Click="CloseWindow_Click" />
                 </StackPanel>
             </Grid>
         </Border>
@@ -43,27 +71,55 @@
                 <ColumnDefinition Width="218" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <Border Grid.Column="0" Background="#0E1929" BorderBrush="#1E2D43" BorderThickness="0,0,1,0">
+            <Border Grid.Column="0" Background="{DynamicResource SidebarBackground}"
+                    BorderBrush="{DynamicResource PanelBorder}" BorderThickness="0,0,1,0">
                 <DockPanel Margin="15,22">
                     <StackPanel DockPanel.Dock="Top">
-                        <TextBlock Text="WORKSPACE" Foreground="#657B96" FontSize="10"
+                        <TextBlock Text="{DynamicResource Text.Workspace}" Foreground="{DynamicResource MutedText}" FontSize="10"
                                    FontWeight="SemiBold" Margin="10,0,0,12" />
-                        <Button Style="{StaticResource NavigationButton}" Click="ShowOverview_Click"
-                                Content="◉   Overview" />
-                        <Button Style="{StaticResource NavigationButton}" Click="ShowConsole_Click"
-                                Content="⌁   Serial console" />
-                        <Button Style="{StaticResource NavigationButton}" Click="ShowHistory_Click"
-                                Content="▤   History &amp; compare" />
+                        <Button x:Name="OverviewNavButton" Tag="Active" Style="{StaticResource NavigationButton}" Click="ShowOverview_Click">
+                            <Grid Width="180">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="28" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="01" Foreground="{DynamicResource AccentBrush}" FontSize="10"
+                                           VerticalAlignment="Center" />
+                                <TextBlock Grid.Column="1" Text="{DynamicResource Text.BenchmarkNav}" VerticalAlignment="Center" />
+                            </Grid>
+                        </Button>
+                        <Button x:Name="ConsoleNavButton" Style="{StaticResource NavigationButton}" Click="ShowConsole_Click">
+                            <Grid Width="180">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="28" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="02" Foreground="{DynamicResource AccentBrush}" FontSize="10"
+                                           VerticalAlignment="Center" />
+                                <TextBlock Grid.Column="1" Text="{DynamicResource Text.ConsoleNav}" VerticalAlignment="Center" />
+                            </Grid>
+                        </Button>
+                        <Button x:Name="HistoryNavButton" Style="{StaticResource NavigationButton}" Click="ShowHistory_Click">
+                            <Grid Width="180">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="28" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="03" Foreground="{DynamicResource AccentBrush}" FontSize="10"
+                                           VerticalAlignment="Center" />
+                                <TextBlock Grid.Column="1" Text="{DynamicResource Text.HistoryNav}" VerticalAlignment="Center" />
+                            </Grid>
+                        </Button>
                     </StackPanel>
-                    <Border DockPanel.Dock="Bottom" Background="#111F32" BorderBrush="#24364E"
+                    <Border DockPanel.Dock="Bottom" Background="{DynamicResource PanelAltBackground}" BorderBrush="{DynamicResource PanelBorder}"
                             BorderThickness="1" CornerRadius="10" Padding="12" Margin="0,0,0,2">
                         <StackPanel>
-                            <TextBlock Text="CONNECTED BOARD" FontSize="9" FontWeight="SemiBold"
-                                       Foreground="#7188A3" />
-                            <TextBlock x:Name="SidebarBoardText" Text="Not identified" FontSize="12"
+                            <TextBlock Text="{DynamicResource Text.ConnectedBoard}" FontSize="9" FontWeight="SemiBold"
+                                       Foreground="{DynamicResource MutedText}" />
+                            <TextBlock x:Name="SidebarBoardText" Text="{DynamicResource Text.NotIdentified}" FontSize="12"
                                        FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,8,0,3" />
-                            <TextBlock x:Name="SidebarClassText" Text="Select a COM port to begin"
-                                       FontSize="10" Foreground="{StaticResource SecondaryText}"
+                            <TextBlock x:Name="SidebarClassText" Text="{DynamicResource Text.SelectCom}"
+                                       FontSize="10" Foreground="{DynamicResource SecondaryText}"
                                        TextWrapping="Wrap" />
                         </StackPanel>
                     </Border>
@@ -78,9 +134,9 @@
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
                     <StackPanel Grid.Row="0" Margin="0,0,0,15">
-                        <TextBlock Text="Capture workspace" FontSize="24" FontWeight="SemiBold" />
-                        <TextBlock Text="Prepare firmware, capture real board measurements, and score them against a measured profile."
-                                   Foreground="{StaticResource SecondaryText}" Margin="0,5,0,0" />
+                        <TextBlock Text="{DynamicResource Text.RunBenchmark}" FontSize="24" FontWeight="SemiBold" />
+                        <TextBlock Text="{DynamicResource Text.RunBenchmarkDescription}"
+                                   Foreground="{DynamicResource SecondaryText}" Margin="0,5,0,0" />
                     </StackPanel>
 
                     <Grid Grid.Row="1" Margin="0,0,0,15">
@@ -88,18 +144,16 @@
                             <ColumnDefinition Width="1.25*" />
                             <ColumnDefinition Width="0.9*" />
                         </Grid.ColumnDefinitions>
-                        <Border Grid.Column="0" Background="{StaticResource PanelBackground}"
-                                BorderBrush="{StaticResource PanelBorder}" BorderThickness="1"
+                        <Border Grid.Column="0" Background="{DynamicResource PanelBackground}"
+                                BorderBrush="{DynamicResource PanelBorder}" BorderThickness="1"
                                 CornerRadius="13" Padding="18" Margin="0,0,12,0">
                             <StackPanel>
                                 <DockPanel Margin="0,0,0,16" LastChildFill="False">
                                     <StackPanel>
-                                        <TextBlock Text="Device &amp; firmware" Style="{StaticResource SectionTitle}" />
-                                        <TextBlock Text="Select the serial port used for identity, capture and upload."
-                                                   Foreground="{StaticResource SecondaryText}" FontSize="11" Margin="0,4,0,0" />
+                                        <TextBlock Text="{DynamicResource Text.ConnectBoard}" Style="{StaticResource SectionTitle}" />
+                                        <TextBlock Text="{DynamicResource Text.ConnectBoardDescription}"
+                                                   Foreground="{DynamicResource SecondaryText}" FontSize="11" Margin="0,4,0,0" />
                                     </StackPanel>
-                                    <Button DockPanel.Dock="Right" Content="Identify board" Style="{StaticResource SecondaryButton}"
-                                            Click="IdentifyBoard_Click" Margin="10,0,0,0" />
                                 </DockPanel>
                                 <Grid>
                                     <Grid.ColumnDefinitions>
@@ -108,73 +162,85 @@
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
                                     <StackPanel Grid.Column="0" Margin="0,0,12,0">
-                                        <TextBlock Text="SERIAL PORT" Style="{StaticResource FieldLabel}" />
+                                        <TextBlock Text="{DynamicResource Text.SerialPort}" Style="{StaticResource FieldLabel}" />
                                         <ComboBox x:Name="PortCombo" Height="36" MinWidth="145"
                                                   SelectionChanged="PortCombo_SelectionChanged" />
                                     </StackPanel>
                                     <StackPanel Grid.Column="1" Margin="0,0,12,0">
-                                        <TextBlock Text="FIRMWARE ENVIRONMENT" Style="{StaticResource FieldLabel}" />
-                                        <ComboBox x:Name="EnvironmentCombo" Height="36" IsEditable="True" />
+                                        <TextBlock Text="{DynamicResource Text.AutoTarget}" Style="{StaticResource FieldLabel}" />
+                                        <ComboBox x:Name="EnvironmentCombo" Height="36" IsEditable="False" />
                                     </StackPanel>
-                                    <Button Grid.Column="2" Content="↻" ToolTip="Refresh COM ports and PlatformIO environments"
-                                            Style="{StaticResource SecondaryButton}" Height="36" Width="42"
+                                    <Button Grid.Column="2" Content="{DynamicResource Text.Refresh}" ToolTip="{DynamicResource Text.RefreshPorts}"
+                                            Style="{StaticResource SecondaryButton}" Height="36" Padding="12,8"
                                             VerticalAlignment="Bottom" Click="RefreshPorts_Click" />
                                 </Grid>
-                                <Grid Margin="0,13,0,0">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="1.35*" />
-                                        <ColumnDefinition Width="0.65*" />
-                                        <ColumnDefinition Width="0.75*" />
-                                        <ColumnDefinition Width="1.1*" />
-                                    </Grid.ColumnDefinitions>
-                                    <StackPanel Grid.Column="0" Margin="0,0,10,0">
-                                        <TextBlock Text="SHARED REFERENCE PROFILE" Style="{StaticResource FieldLabel}" />
-                                        <ComboBox x:Name="ProfileCombo" Height="36" IsEditable="False"
-                                                  SelectionChanged="ProfileCombo_SelectionChanged" />
-                                    </StackPanel>
-                                    <StackPanel Grid.Column="1" Margin="0,0,10,0">
-                                        <TextBlock Text="BAUD" Style="{StaticResource FieldLabel}" />
-                                        <TextBox x:Name="BaudTextBox" Text="115200" Height="36" />
-                                    </StackPanel>
-                                    <StackPanel Grid.Column="2" Margin="0,0,10,0">
-                                        <TextBlock Text="RUNS" Style="{StaticResource FieldLabel}" />
-                                        <TextBox x:Name="RunsTextBox" Text="3" Height="36" />
-                                    </StackPanel>
-                                    <StackPanel Grid.Column="3">
-                                        <TextBlock Text="CAPTURE TIMEOUT (SEC)" Style="{StaticResource FieldLabel}" />
-                                        <TextBox x:Name="TimeoutTextBox" Text="180" Height="36" />
-                                    </StackPanel>
-                                </Grid>
-                                <Grid Margin="0,14,0,0">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Text="External PlatformIO project (optional)" Foreground="{StaticResource SecondaryText}"
-                                               VerticalAlignment="Center" Margin="0,0,10,0" />
-                                    <TextBox x:Name="ProjectTextBox" Grid.Column="1" Height="34"
-                                             VerticalContentAlignment="Center" />
-                                    <Button Grid.Column="2" Content="Browse" Style="{StaticResource SecondaryButton}"
-                                            Height="34" Padding="12,4" Margin="8,0,0,0"
-                                            Click="BrowseProject_Click" />
-                                </Grid>
-                                <TextBlock Text="Leave the folder blank to use the firmware sources bundled with this app."
-                                           Foreground="{StaticResource SecondaryText}" FontSize="10"
-                                           Margin="0,7,0,0" />
+                                <TextBlock Text="{DynamicResource Text.ChipDetectionHint}"
+                                           Foreground="{DynamicResource SecondaryText}" FontSize="11"
+                                           TextWrapping="Wrap" Margin="0,10,0,0" />
                                 <StackPanel Orientation="Horizontal" Margin="0,16,0,0">
-                                    <Button Content="Build firmware" Style="{StaticResource SecondaryButton}"
-                                            Click="BuildFirmware_Click" Margin="0,0,9,0" />
-                                    <Button Content="Upload &amp; capture" Style="{StaticResource PrimaryButton}"
-                                            Click="UploadCapture_Click" Margin="0,0,12,0" />
-                                    <Button Content="Capture only" Style="{StaticResource SecondaryButton}"
-                                            Click="CaptureOnly_Click" />
+                                    <Button Content="{DynamicResource Text.UploadCapture}" Style="{StaticResource PrimaryButton}"
+                                            Click="UploadCapture_Click" Margin="0,0,9,0" />
+                                    <Button Content="{DynamicResource Text.RetryDetection}" Style="{StaticResource SecondaryButton}"
+                                            Click="IdentifyBoard_Click" />
                                 </StackPanel>
+                                <Expander Header="{DynamicResource Text.AdvancedSettings}" IsExpanded="False" Margin="0,14,0,0"
+                                          Foreground="{DynamicResource SecondaryText}">
+                                    <StackPanel Margin="0,12,0,0">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="1.5*" />
+                                                <ColumnDefinition Width="0.7*" />
+                                                <ColumnDefinition Width="0.7*" />
+                                                <ColumnDefinition Width="1.1*" />
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                                                <TextBlock Text="{DynamicResource Text.ReferenceProfile}" Style="{StaticResource FieldLabel}" />
+                                                <ComboBox x:Name="ProfileCombo" Height="36" IsEditable="False"
+                                                          SelectionChanged="ProfileCombo_SelectionChanged" />
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="1" Margin="0,0,10,0">
+                                                <TextBlock Text="{DynamicResource Text.Baud}" Style="{StaticResource FieldLabel}" />
+                                                <TextBox x:Name="BaudTextBox" Text="115200" Height="36" />
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="2" Margin="0,0,10,0">
+                                                <TextBlock Text="{DynamicResource Text.Runs}" Style="{StaticResource FieldLabel}" />
+                                                <TextBox x:Name="RunsTextBox" Text="3" Height="36" />
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="3">
+                                                <TextBlock Text="{DynamicResource Text.Timeout}" Style="{StaticResource FieldLabel}" />
+                                                <TextBox x:Name="TimeoutTextBox" Text="180" Height="36" />
+                                            </StackPanel>
+                                        </Grid>
+                                        <Grid Margin="0,12,0,0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="{DynamicResource Text.ExternalProject}" Foreground="{DynamicResource SecondaryText}"
+                                                       VerticalAlignment="Center" Margin="0,0,10,0" />
+                                            <TextBox x:Name="ProjectTextBox" Grid.Column="1" Height="34"
+                                                     VerticalContentAlignment="Center" />
+                                            <Button Grid.Column="2" Content="{DynamicResource Text.Browse}" Style="{StaticResource SecondaryButton}"
+                                                    Height="34" Padding="12,4" Margin="8,0,0,0"
+                                                    Click="BrowseProject_Click" />
+                                        </Grid>
+                                        <TextBlock Text="{DynamicResource Text.UseBundledFirmware}"
+                                                   Foreground="{DynamicResource SecondaryText}" FontSize="10"
+                                                   Margin="0,6,0,0" />
+                                        <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
+                                            <Button Content="{DynamicResource Text.BuildOnly}" Style="{StaticResource SecondaryButton}"
+                                                    Click="BuildFirmware_Click" Margin="0,0,9,0" />
+                                            <Button Content="{DynamicResource Text.CaptureOnly}" Style="{StaticResource SecondaryButton}"
+                                                    Click="CaptureOnly_Click" />
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Expander>
                             </StackPanel>
                         </Border>
 
-                        <Border Grid.Column="1" Background="{StaticResource PanelBackground}"
-                                BorderBrush="{StaticResource PanelBorder}" BorderThickness="1"
+                        <Border Grid.Column="1" Background="{DynamicResource PanelBackground}"
+                                BorderBrush="{DynamicResource PanelBorder}" BorderThickness="1"
                                 CornerRadius="13" Padding="18">
                             <Grid>
                                 <Grid.RowDefinitions>
@@ -183,15 +249,15 @@
                                 </Grid.RowDefinitions>
                                 <DockPanel>
                                     <StackPanel>
-                                        <TextBlock Text="Benchmark score" Style="{StaticResource SectionTitle}" />
-                                        <TextBlock x:Name="ScoreProfileText" Text="No scored capture yet"
-                                                   Foreground="{StaticResource SecondaryText}" FontSize="11" Margin="0,4,0,0" />
+                                        <TextBlock Text="{DynamicResource Text.BenchmarkScore}" Style="{StaticResource SectionTitle}" />
+                                        <TextBlock x:Name="ScoreProfileText" Text="{DynamicResource Text.ClassicAnchor}"
+                                                   Foreground="{DynamicResource SecondaryText}" FontSize="11" Margin="0,4,0,0" />
                                     </StackPanel>
                                     <StackPanel DockPanel.Dock="Right" HorizontalAlignment="Right">
                                         <TextBlock x:Name="GlobalScoreText" Text="—" FontSize="38"
-                                                   FontWeight="SemiBold" Foreground="#63D7FF"
+                                                   FontWeight="SemiBold" Foreground="{DynamicResource AccentBrush}"
                                                    HorizontalAlignment="Right" />
-                                        <TextBlock Text="REFERENCE INDEX" FontSize="9" Foreground="#7188A3"
+                                        <TextBlock Text="{DynamicResource Text.ScoreScale}" FontSize="9" Foreground="{DynamicResource MutedText}"
                                                    HorizontalAlignment="Right" />
                                     </StackPanel>
                                 </DockPanel>
@@ -205,18 +271,22 @@
                                               IsReadOnly="True" RowHeight="31" ColumnHeaderHeight="30"
                                               SelectionMode="Single">
                                         <DataGrid.Columns>
-                                            <DataGridTextColumn Header="CATEGORY" Binding="{Binding Category}" Width="*" />
-                                            <DataGridTextColumn Header="INDEX" Binding="{Binding Score}" Width="75" />
-                                            <DataGridTextColumn Header="WEIGHT" Binding="{Binding Weight}" Width="70" />
+                                            <DataGridTextColumn Header="{DynamicResource Text.Category}" Binding="{Binding Category}" Width="*" />
+                                            <DataGridTextColumn Header="{DynamicResource Text.Score}" Binding="{Binding Score}" Width="75" />
+                                            <DataGridTextColumn Header="{DynamicResource Text.Weight}" Binding="{Binding Weight}" Width="70" />
                                         </DataGrid.Columns>
                                     </DataGrid>
                                     <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="15,0,0,0">
-                                        <TextBlock Text="COVERAGE" FontSize="9" Foreground="#7188A3" />
+                                        <TextBlock Text="{DynamicResource Text.CategoryCoverage}" FontSize="9" Foreground="{DynamicResource MutedText}"
+                                                   ToolTip="{DynamicResource Text.CoverageHelp}" />
                                         <TextBlock x:Name="CoverageText" Text="—" FontSize="20" FontWeight="SemiBold"
-                                                   Foreground="#D7E8FA" Margin="0,3,0,14" />
-                                        <TextBlock Text="AVAILABLE CATEGORIES" FontSize="9" Foreground="#7188A3" />
+                                                   Foreground="{DynamicResource PrimaryText}" Margin="0,3,0,0"
+                                                   ToolTip="{DynamicResource Text.CoverageHelp}" />
+                                        <TextBlock Text="{DynamicResource Text.CoverageHint}" FontSize="9"
+                                                   Foreground="{DynamicResource SecondaryText}" Margin="0,0,0,14" />
+                                        <TextBlock Text="{DynamicResource Text.CategoriesIncluded}" FontSize="9" Foreground="{DynamicResource MutedText}" />
                                         <TextBlock x:Name="AvailableCategoriesText" Text="—" FontSize="12"
-                                                   Foreground="{StaticResource SecondaryText}" TextWrapping="Wrap"
+                                                   Foreground="{DynamicResource SecondaryText}" TextWrapping="Wrap"
                                                    MaxWidth="125" Margin="0,3,0,0" />
                                     </StackPanel>
                                 </Grid>
@@ -224,8 +294,8 @@
                         </Border>
                     </Grid>
 
-                    <Border Grid.Row="2" Background="{StaticResource PanelBackground}"
-                            BorderBrush="{StaticResource PanelBorder}" BorderThickness="1"
+                    <Border Grid.Row="2" Background="{DynamicResource PanelBackground}"
+                    BorderBrush="{DynamicResource PanelBorder}" BorderThickness="1"
                             CornerRadius="13" Padding="16">
                         <Grid>
                             <Grid.RowDefinitions>
@@ -234,24 +304,24 @@
                             </Grid.RowDefinitions>
                             <DockPanel Margin="0,0,0,10" LastChildFill="False">
                                 <StackPanel>
-                                    <TextBlock Text="Structured measurements" Style="{StaticResource SectionTitle}" />
-                                    <TextBlock Text="Raw values and stable reference indices — separate from serial output."
-                                               Foreground="{StaticResource SecondaryText}" FontSize="11" Margin="0,4,0,0" />
+                                    <TextBlock Text="{DynamicResource Text.StructuredMeasurements}" Style="{StaticResource SectionTitle}" />
+                                    <TextBlock Text="{DynamicResource Text.StructuredMeasurementsDescription}"
+                                               Foreground="{DynamicResource SecondaryText}" FontSize="11" Margin="0,4,0,0" />
                                 </StackPanel>
-                                <Button DockPanel.Dock="Right" Content="Open reports folder"
+                                <Button DockPanel.Dock="Right" Content="{DynamicResource Text.OpenReports}"
                                         Style="{StaticResource SecondaryButton}" Click="OpenOutputFolder_Click" />
                             </DockPanel>
                             <DataGrid x:Name="MetricsGrid" Grid.Row="1" Style="{StaticResource MetricDataGrid}"
                                       AutoGenerateColumns="False" CanUserSortColumns="True"
                                       SelectionMode="Single" AlternationCount="2">
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn Header="CATEGORY" Binding="{Binding Category}" Width="130" />
-                                    <DataGridTextColumn Header="METRIC" Binding="{Binding Name}" Width="2*" />
-                                    <DataGridTextColumn Header="MEASURED VALUE" Binding="{Binding Value}" Width="150" />
-                                    <DataGridTextColumn Header="UNIT" Binding="{Binding Unit}" Width="125" />
-                                    <DataGridTextColumn Header="STATUS / INDEX" Binding="{Binding Status}" Width="180" />
-                                    <DataGridTextColumn Header="VARIATION" Binding="{Binding Variation}" Width="115" />
-                                    <DataGridTextColumn Header="REASON" Binding="{Binding Reason}" Width="2*" />
+                                    <DataGridTextColumn Header="{DynamicResource Text.Category}" Binding="{Binding Category}" Width="130" />
+                                    <DataGridTextColumn Header="{DynamicResource Text.Metric}" Binding="{Binding Name}" Width="2*" />
+                                    <DataGridTextColumn Header="{DynamicResource Text.MeasuredValue}" Binding="{Binding Value}" Width="150" />
+                                    <DataGridTextColumn Header="{DynamicResource Text.Unit}" Binding="{Binding Unit}" Width="125" />
+                                    <DataGridTextColumn Header="{DynamicResource Text.StatusScore}" Binding="{Binding Status}" Width="180" />
+                                    <DataGridTextColumn Header="{DynamicResource Text.Variation}" Binding="{Binding Variation}" Width="115" />
+                                    <DataGridTextColumn Header="{DynamicResource Text.Reason}" Binding="{Binding Reason}" Width="2*" />
                                 </DataGrid.Columns>
                             </DataGrid>
                         </Grid>
@@ -265,15 +335,16 @@
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <StackPanel Grid.Row="0" Margin="0,0,0,16">
-                        <TextBlock Text="Serial console" FontSize="24" FontWeight="SemiBold" />
-                        <TextBlock Text="Interactive serial monitor for boot logs and device commands. Disconnect before build, upload or benchmark capture."
-                                   Foreground="{StaticResource SecondaryText}" Margin="0,5,0,0" />
+                        <TextBlock Text="{DynamicResource Text.SerialConsole}" FontSize="24" FontWeight="SemiBold" />
+                        <TextBlock Text="{DynamicResource Text.SerialConsoleDescription}"
+                                   Foreground="{DynamicResource SecondaryText}" Margin="0,5,0,0" />
                     </StackPanel>
-                    <Border Grid.Row="1" Background="#080F1A" BorderBrush="{StaticResource PanelBorder}"
+                    <Border Grid.Row="1" Background="{DynamicResource ConsoleBackground}" BorderBrush="{DynamicResource PanelBorder}"
                             BorderThickness="1" CornerRadius="12" Padding="14">
-                        <TextBox x:Name="ConsoleTextBox" Background="Transparent" Foreground="#B6D7EF"
+                        <TextBox x:Name="ConsoleTextBox" Background="Transparent" Foreground="{DynamicResource ConsoleForeground}"
                                  BorderThickness="0" FontFamily="Cascadia Mono" FontSize="12"
                                  IsReadOnly="True" AcceptsReturn="True" TextWrapping="NoWrap"
+                                 VerticalContentAlignment="Top"
                                  VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" />
                     </Border>
                     <Grid Grid.Row="2" Margin="0,12,0,0">
@@ -286,14 +357,15 @@
                         </Grid.ColumnDefinitions>
                         <ComboBox x:Name="ConsolePortCombo" Width="125" Height="36" />
                         <TextBox x:Name="ConsoleBaudTextBox" Grid.Column="1" Text="115200" Width="95"
-                                 Height="36" Margin="8,0,0,0" />
-                        <Button x:Name="ConsoleConnectButton" Grid.Column="2" Content="Connect"
+                                 Height="36" Margin="8,0,0,0" TextAlignment="Center"
+                                 HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                        <Button x:Name="ConsoleConnectButton" Grid.Column="2" Content="{DynamicResource Text.Connect}"
                                 Style="{StaticResource SecondaryButton}" Click="ConsoleConnect_Click"
                                 Margin="8,0,0,0" />
                         <TextBox x:Name="ConsoleInputTextBox" Grid.Column="3" Height="36"
                                  Margin="12,0,8,0" VerticalContentAlignment="Center"
                                  KeyDown="ConsoleInput_KeyDown" />
-                        <Button Grid.Column="4" Content="Send" Style="{StaticResource PrimaryButton}"
+                        <Button Grid.Column="4" Content="{DynamicResource Text.Send}" Style="{StaticResource PrimaryButton}"
                                 Click="ConsoleSend_Click" />
                     </Grid>
                 </Grid>
@@ -305,9 +377,9 @@
                         <RowDefinition Height="190" />
                     </Grid.RowDefinitions>
                     <StackPanel Grid.Row="0" Margin="0,0,0,15">
-                        <TextBlock Text="History &amp; comparison" FontSize="24" FontWeight="SemiBold" />
-                        <TextBlock Text="Runs are saved per board and profile. Compare multiple boards against the same reference and shared stable metrics."
-                                   Foreground="{StaticResource SecondaryText}" Margin="0,5,0,0" />
+                        <TextBlock Text="{DynamicResource Text.HistoryComparison}" FontSize="24" FontWeight="SemiBold" />
+                        <TextBlock Text="{DynamicResource Text.HistoryDescription}"
+                                   Foreground="{DynamicResource SecondaryText}" Margin="0,5,0,0" />
                     </StackPanel>
                     <Grid Grid.Row="1">
                         <Grid.RowDefinitions>
@@ -315,31 +387,32 @@
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
                         <WrapPanel Margin="0,0,0,11">
-                            <Button Content="Import result" Style="{StaticResource SecondaryButton}"
+                            <Button Content="{DynamicResource Text.ImportResult}" Style="{StaticResource SecondaryButton}"
                                     Click="ImportResult_Click" Margin="0,0,8,0" />
-                            <Button Content="Import profile" Style="{StaticResource SecondaryButton}"
+                            <Button Content="{DynamicResource Text.ImportProfile}" Style="{StaticResource SecondaryButton}"
                                     Click="ImportProfile_Click" Margin="0,0,8,0" />
-                            <Button Content="Calibrate selected" Style="{StaticResource SecondaryButton}"
+                            <Button Content="{DynamicResource Text.CalibrateSelected}" Style="{StaticResource SecondaryButton}"
                                     Click="CalibrateSelected_Click" Margin="0,0,8,0" />
-                            <Button Content="Delete selected" Style="{StaticResource SecondaryButton}"
+                            <Button Content="{DynamicResource Text.DeleteSelected}" Style="{StaticResource SecondaryButton}"
                                     Click="DeleteSelected_Click" Margin="0,0,8,0" />
-                            <Button Content="Compare selected" Style="{StaticResource PrimaryButton}"
+                            <Button Content="{DynamicResource Text.CompareSelected}" Style="{StaticResource PrimaryButton}"
                                     Click="CompareSelected_Click" />
                         </WrapPanel>
                         <DataGrid x:Name="HistoryGrid" Grid.Row="1" Style="{StaticResource MetricDataGrid}"
                                   AutoGenerateColumns="False" SelectionMode="Extended"
-                                  SelectionUnit="FullRow" IsReadOnly="True">
+                                  SelectionUnit="FullRow" IsReadOnly="True"
+                                  MouseDoubleClick="HistoryGrid_MouseDoubleClick">
                             <DataGrid.Columns>
-                                <DataGridTextColumn Header="TARGET" Binding="{Binding Target}" Width="*" />
-                                <DataGridTextColumn Header="FAMILY" Binding="{Binding Family}" Width="110" />
-                                <DataGridTextColumn Header="COMPARABILITY CLASS" Binding="{Binding ComparabilityClass}" Width="190" />
-                                <DataGridTextColumn Header="PROFILE" Binding="{Binding ProfileId}" Width="180" />
-                                <DataGridTextColumn Header="CAPTURED" Binding="{Binding CapturedAt}" Width="195" />
+                                <DataGridTextColumn Header="{DynamicResource Text.Target}" Binding="{Binding Target}" Width="*" />
+                                <DataGridTextColumn Header="{DynamicResource Text.Family}" Binding="{Binding Family}" Width="110" />
+                                <DataGridTextColumn Header="{DynamicResource Text.ComparabilityClass}" Binding="{Binding ComparabilityClass}" Width="190" />
+                                <DataGridTextColumn Header="{DynamicResource Text.Profile}" Binding="{Binding ProfileId}" Width="180" />
+                                <DataGridTextColumn Header="{DynamicResource Text.Captured}" Binding="{Binding CapturedAtDisplay}" Width="195" />
                             </DataGrid.Columns>
                         </DataGrid>
                     </Grid>
-                    <Border Grid.Row="2" Background="{StaticResource PanelBackground}"
-                            BorderBrush="{StaticResource PanelBorder}" BorderThickness="1"
+                    <Border Grid.Row="2" Background="{DynamicResource PanelBackground}"
+                    BorderBrush="{DynamicResource PanelBorder}" BorderThickness="1"
                             CornerRadius="12" Padding="12" Margin="0,12,0,0">
                         <Grid>
                             <Grid.RowDefinitions>
@@ -347,20 +420,20 @@
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
                             <DockPanel Margin="0,0,0,7" LastChildFill="False">
-                                <TextBlock Text="Latest shared-reference comparison" Style="{StaticResource SectionTitle}" />
+                                <TextBlock Text="{DynamicResource Text.LatestComparison}" Style="{StaticResource SectionTitle}" />
                                 <TextBlock x:Name="ComparisonSummaryText" DockPanel.Dock="Right"
-                                           Text="Select at least two history entries."
-                                           Foreground="{StaticResource SecondaryText}" FontSize="11"
+                                           Text="{DynamicResource Text.SelectTwoRuns}"
+                                           Foreground="{DynamicResource SecondaryText}" FontSize="11"
                                            VerticalAlignment="Center" />
                             </DockPanel>
                             <DataGrid x:Name="ComparisonGrid" Grid.Row="1" Style="{StaticResource MetricDataGrid}"
                                       AutoGenerateColumns="False" IsReadOnly="True"
                                       ColumnHeaderHeight="28" RowHeight="27">
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn Header="TARGET" Binding="{Binding Target}" Width="*" />
-                                    <DataGridTextColumn Header="CLASS" Binding="{Binding ComparabilityClass}" Width="180" />
-                                    <DataGridTextColumn Header="COMMON INDEX" Binding="{Binding GlobalScore}" Width="130" />
-                                    <DataGridTextColumn Header="COVERAGE" Binding="{Binding Coverage}" Width="110" />
+                                    <DataGridTextColumn Header="{DynamicResource Text.Target}" Binding="{Binding Target}" Width="*" />
+                                    <DataGridTextColumn Header="{DynamicResource Text.ComparabilityClass}" Binding="{Binding ComparabilityClass}" Width="180" />
+                                    <DataGridTextColumn Header="{DynamicResource Text.CommonScore}" Binding="{Binding GlobalScore}" Width="130" />
+                                    <DataGridTextColumn Header="{DynamicResource Text.CommonCoverage}" Binding="{Binding Coverage}" Width="140" />
                                 </DataGrid.Columns>
                             </DataGrid>
                         </Grid>
@@ -369,10 +442,10 @@
             </Grid>
         </Grid>
 
-        <Border Grid.Row="2" Background="#0E1929" BorderBrush="#1E2D43" BorderThickness="0,1,0,0">
+        <Border Grid.Row="2" Background="{DynamicResource HeaderBackground}" BorderBrush="{DynamicResource PanelBorder}" BorderThickness="0,1,0,0">
             <DockPanel Margin="24,0">
-                <TextBlock x:Name="FooterText" Text="Ready — no fabricated or simulated measurements"
-                           Foreground="{StaticResource SecondaryText}" FontSize="10"
+                <TextBlock x:Name="FooterText" Text="{DynamicResource Text.FooterReady}"
+                           Foreground="{DynamicResource SecondaryText}" FontSize="10"
                            VerticalAlignment="Center" />
                 <ProgressBar x:Name="BusyIndicator" DockPanel.Dock="Right" Width="150" Height="4"
                              IsIndeterminate="True" Visibility="Collapsed" />

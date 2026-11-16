@@ -14,6 +14,10 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <ProjectReference Include="..\Esp32Benchmark.Core\Esp32Benchmark.Core.csproj" />
+    <None Include="..\Esp32Benchmark.Desktop\MainWindow.xaml"
+          Link="Fixtures\MainWindow.xaml" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\Esp32Benchmark.Desktop\MainWindow.xaml.cs"
+          Link="Fixtures\MainWindow.xaml.cs" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\..\samples\reference_profiles\esp32-classic-v1.json"
           Link="Fixtures\esp32-classic-v1.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\..\samples\reference_profiles\esp32-classic-v1-verification\results.json"

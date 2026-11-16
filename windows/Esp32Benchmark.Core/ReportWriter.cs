@@ -115,9 +115,9 @@ public static class ReportWriter
             </style></head><body><h1>ESP32xBenchmark</h1><article>
             <h2>{{H(BenchmarkEngine.String(device["target"]))}}</h2><p>Family: {{H(BenchmarkEngine.String(device["family"]))}}
             · Class: {{H(BenchmarkEngine.String(device["comparability_class"]))}}</p>
-            <div class="score">{{global}}<small> reference index</small></div>
-            <p>Coverage: {{FormatPercent(scores?["coverage"])}} · Reference: {{H(BenchmarkEngine.String(scores?["reference_profile"]))}}</p>
-            <p class="muted">Reference run = 100. Scores are not capped. Cross-class scores only describe their common measured workloads.</p>
+            <div class="score">{{global}}<small> / 100</small></div>
+            <p>Category coverage: {{FormatPercent(scores?["coverage"])}} of category weights · Reference: {{H(BenchmarkEngine.String(scores?["reference_profile"]))}}</p>
+            <p class="muted">Coverage is the share of benchmark category weights represented by stable, matching measurements. The ESP32 classic reference is anchored at 20/100; scores are capped at 100. Cross-class scores use matching measured workloads only.</p>
             </article><article><h2>Category scores</h2><table><thead><tr><th>Category</th><th>Index</th><th>Weight</th></tr></thead>
             <tbody>{{categoryRows}}</tbody></table></article><article><h2>Raw measurements</h2><table><thead>
             <tr><th>Category</th><th>Metric</th><th>Value</th><th>Unit</th><th>Status</th><th>Variation %</th></tr></thead>
@@ -186,9 +186,9 @@ public static class ReportWriter
             h1,h2,th{color:#8ed8ff}table{border-collapse:collapse;width:100%}th,td{padding:10px;text-align:left;border-bottom:1px solid #293953}
             .muted{color:#adbbcf}</style></head><body><h1>Shared-reference board comparison</h1><article>
             <p>Reference: <b>{{H(BenchmarkEngine.String(comparison["reference_profile"]))}}</b>
-            ({{H(BenchmarkEngine.String(comparison["reference_class"]))}}); common coverage: {{FormatPercent(comparison["coverage"])}}.</p>
+            ({{H(BenchmarkEngine.String(comparison["reference_class"]))}}); common category coverage: {{FormatPercent(comparison["coverage"])}}.</p>
             <p>Common stable metrics: {{commonMetrics}}</p><p class="muted">{{H(BenchmarkEngine.String(comparison["interpretation"]))}}</p>
-            </article><article><table><thead><tr><th>Target</th><th>Family</th><th>Class</th><th>Common index</th><th>Coverage</th>{{header}}</tr></thead>
+            </article><article><table><thead><tr><th>Target</th><th>Family</th><th>Class</th><th>Common score /100</th><th>Coverage</th>{{header}}</tr></thead>
             <tbody>{{rows}}</tbody></table></article></body></html>
             """;
         File.WriteAllText(path, html, new UTF8Encoding(false));

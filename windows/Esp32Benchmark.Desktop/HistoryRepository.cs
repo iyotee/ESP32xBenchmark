@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Globalization;
 using Esp32Benchmark.Core;
 
 namespace Esp32Benchmark.Desktop;
@@ -12,10 +13,25 @@ public sealed record HistoryEntry(
     string ProfileId,
     string CapturedAt,
     string FilePath,
-    JsonObject Result);
+    JsonObject Result)
+{
+    public string CapturedAtDisplay =>
+        DateTimeOffset.TryParse(
+            CapturedAt, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out var captured)
+            ? captured.ToLocalTime().ToString("g", CultureInfo.CurrentCulture)
+            : CapturedAt;
+}
 
 public sealed class HistoryRepository
 {
+    public const string DefaultProfileId = "esp32-classic-v1";
+
+    private const string ProfileResourcePrefix = "Esp32Benchmark.Desktop.Profiles.";
+    private static readonly string[] BundledProfileIds =
+    [
+        DefaultProfileId
+    ];
+
     public HistoryRepository()
     {
         var root = Path.Combine(
@@ -25,6 +41,7 @@ public sealed class HistoryRepository
         ProfileDirectory = Path.Combine(root, "profiles");
         Directory.CreateDirectory(HistoryDirectory);
         Directory.CreateDirectory(ProfileDirectory);
+        EnsureBundledProfiles();
     }
 
     public string HistoryDirectory { get; }
@@ -125,6 +142,16 @@ public sealed class HistoryRepository
             .Order(StringComparer.OrdinalIgnoreCase)
             .ToArray();
 
+    public static void VerifyBundledProfiles()
+    {
+        foreach (var profileId in BundledProfileIds)
+        {
+            using var stream = OpenBundledProfile(profileId);
+            using var reader = new StreamReader(stream);
+            ParseProfile(reader.ReadToEnd());
+        }
+    }
+
     public string ImportProfile(string sourcePath)
     {
         var profile = ParseProfile(File.ReadAllText(sourcePath));
@@ -173,6 +200,28 @@ public sealed class HistoryRepository
 
         return profileId + ".json";
     }
+
+    private void EnsureBundledProfiles()
+    {
+        foreach (var profileId in BundledProfileIds)
+        {
+            var destination = Path.Combine(ProfileDirectory, SafeProfileFileName(profileId));
+            if (File.Exists(destination))
+            {
+                continue;
+            }
+
+            using var source = OpenBundledProfile(profileId);
+            using var target = new FileStream(destination, FileMode.CreateNew, FileAccess.Write);
+            source.CopyTo(target);
+        }
+    }
+
+    private static Stream OpenBundledProfile(string profileId) =>
+        typeof(HistoryRepository).Assembly.GetManifestResourceStream(
+            ProfileResourcePrefix + profileId + ".json")
+        ?? throw new InvalidDataException(
+            $"The application is missing bundled reference profile '{profileId}'.");
 
     private static HistoryEntry Entry(string id, JsonObject result, string profileId, string path)
     {

@@ -8,6 +8,8 @@
     <LangVersion>12.0</LangVersion>
     <AssemblyName>ESP32xBenchmark</AssemblyName>
     <RootNamespace>Esp32Benchmark.Desktop</RootNamespace>
+    <Version>2026.11.16.1</Version>
+    <ApplicationIcon>..\..\assets\final\app-icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Esp32Benchmark.Core\Esp32Benchmark.Core.csproj" />
@@ -19,5 +21,13 @@
                       LogicalName="Esp32Benchmark.Desktop.Firmware.main.cpp" />
     <EmbeddedResource Include="..\..\platformio_test\src\main_esp8266.cpp"
                       LogicalName="Esp32Benchmark.Desktop.Firmware.main_esp8266.cpp" />
+    <EmbeddedResource Include="..\..\samples\reference_profiles\esp32-classic-v1.json"
+                      LogicalName="Esp32Benchmark.Desktop.Profiles.esp32-classic-v1.json" />
+    <Resource Include="..\..\assets\final\logo-header-dark.png"
+              Link="Assets\logo-header-dark.png" />
+    <Resource Include="..\..\assets\final\logo-header-light.png"
+              Link="Assets\logo-header-light.png" />
+    <Resource Include="..\..\assets\final\app-icon.ico"
+              Link="Assets\app-icon.ico" />
   </ItemGroup>
 </Project>

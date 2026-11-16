@@ -5,4 +5,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <LangVersion>12.0</LangVersion>
   </PropertyGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Localization\en.json" LogicalName="Esp32Benchmark.Core.Localization.en.json" />
+    <EmbeddedResource Include="Localization\fr.json" LogicalName="Esp32Benchmark.Core.Localization.fr.json" />
+  </ItemGroup>
 </Project>

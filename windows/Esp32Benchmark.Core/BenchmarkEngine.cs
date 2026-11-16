@@ -4,7 +4,7 @@ using System.Text.Json.Nodes;
 
 namespace Esp32Benchmark.Core;
 
-/// <summary>Port of the benchmark's documented scoring and common-metric comparison rules.</summary>
+/// <summary>Computes classic-anchored desktop scores and common-metric comparisons.</summary>
 public static class BenchmarkEngine
 {
     public static readonly IReadOnlyDictionary<string, double> CategoryWeights =
@@ -20,6 +20,8 @@ public static class BenchmarkEngine
         };
 
     public const double MaxStdevPercent = 25.0;
+    public const double ReferenceScore = 20.0;
+    public const double MaximumScore = 100.0;
 
     public static JsonObject Score(
         JsonObject result,
@@ -31,8 +33,13 @@ public static class BenchmarkEngine
             ?? throw new InvalidDataException("Result is missing device metadata.");
         var resultClass = String(device["comparability_class"]);
         var referenceClass = String(referenceProfile["comparability_class"]);
-        if (string.IsNullOrEmpty(resultClass) ||
-            (!allowCrossClass && !StringComparer.Ordinal.Equals(resultClass, referenceClass)))
+        if (string.IsNullOrEmpty(resultClass))
+        {
+            throw new InvalidDataException("Result is missing comparability_class metadata.");
+        }
+
+        var crossClass = !StringComparer.Ordinal.Equals(resultClass, referenceClass);
+        if (crossClass && !allowCrossClass)
         {
             throw new InvalidDataException(
                 "Result and reference profile must have the same comparability_class.");
@@ -73,7 +80,9 @@ public static class BenchmarkEngine
 
             if (referenceMetrics[name] is not JsonObject reference ||
                 !StringComparer.Ordinal.Equals(String(reference["category"]), category) ||
-                !StringComparer.Ordinal.Equals(String(reference["direction"]), String(metric["direction"])))
+                !StringComparer.Ordinal.Equals(String(reference["direction"]), String(metric["direction"])) ||
+                (crossClass &&
+                 !StringComparer.Ordinal.Equals(String(reference["unit"]), String(metric["unit"]))))
             {
                 unmatched.Add(name);
                 continue;
@@ -109,7 +118,7 @@ public static class BenchmarkEngine
             values.Add(new JsonObject
             {
                 ["name"] = name,
-                ["value"] = Round(ratio * 100.0, 2),
+                ["value"] = Round(Math.Clamp(ratio * ReferenceScore, 0, MaximumScore), 2),
                 ["observed"] = observed,
                 ["reference"] = baseline,
                 ["unit"] = String(metric["unit"]) is { Length: > 0 } unit
@@ -146,11 +155,14 @@ public static class BenchmarkEngine
             ["reference_profile"] = String(referenceProfile["profile_id"]) is { Length: > 0 } id
                 ? id
                 : "unnamed",
-            ["score_model"] = "weighted-category-index-v1",
+            ["result_class"] = resultClass,
+            ["reference_class"] = referenceClass,
+            ["cross_class"] = crossClass,
+            ["score_model"] = "classic-anchor-weighted-score-v2",
             ["global_score"] = availableWeight > 0
                 ? JsonValue.Create(Round(weightedSum / availableWeight, 2))
                 : null,
-            ["score_scale"] = "reference=100; values are not capped",
+            ["score_scale"] = "reference=20; maximum=100; scores are capped",
             ["coverage"] = Round(availableWeight / totalWeight, 4),
             ["available_weight"] = Round(availableWeight, 4),
             ["categories"] = categories,
@@ -159,9 +171,12 @@ public static class BenchmarkEngine
                 unstable.Select(name => (JsonNode?)JsonValue.Create(name)).ToArray()),
             ["unmatched_metrics"] = new JsonArray(
                 unmatched.Select(name => (JsonNode?)JsonValue.Create(name)).ToArray()),
-            ["interpretation"] =
-                "Power requires an external current monitor; AI/TinyML requires a supported " +
-                "model/runtime. Missing categories are excluded and coverage is reported."
+            ["interpretation"] = crossClass
+                ? "Cross-class score uses matching metrics and units only; it is a workload " +
+                  "comparison, not a same-class baseline. Power requires an external current " +
+                  "monitor; AI/TinyML requires a supported model/runtime."
+                : "Power requires an external current monitor; AI/TinyML requires a supported " +
+                  "model/runtime. Missing categories are excluded and coverage is reported."
         };
     }
 
@@ -262,7 +277,7 @@ public static class BenchmarkEngine
         return new JsonObject
         {
             ["schema_version"] = 1,
-            ["comparison_model"] = "common-metrics-reference-index-v1",
+            ["comparison_model"] = "common-metrics-classic-anchor-score-v2",
             ["reference_profile"] = String(referenceProfile["profile_id"]) is { Length: > 0 } id
                 ? id
                 : "unnamed",

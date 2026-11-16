@@ -100,6 +100,47 @@ public sealed class SerialCaptureAccumulator(int expectedRuns)
 
 public static class BoardEnvironmentRecommender
 {
+    public static (string? Environment, string Explanation) RecommendDetectedChip(string chipName)
+    {
+        var chip = new string(chipName.Where(char.IsLetterOrDigit).ToArray())
+            .ToUpperInvariant();
+
+        if (chip.StartsWith("ESP8266", StringComparison.Ordinal))
+        {
+            return ("esp8266", "The ESP8266 ROM bootloader identified this chip.");
+        }
+
+        if (chip.StartsWith("ESP32S2", StringComparison.Ordinal))
+        {
+            return ("esp32s2", "The ESP32-S2 ROM bootloader identified this chip.");
+        }
+
+        if (chip.StartsWith("ESP32S3", StringComparison.Ordinal))
+        {
+            return ("esp32s3", "The ESP32-S3 ROM bootloader identified this chip.");
+        }
+
+        if (chip.StartsWith("ESP32C3", StringComparison.Ordinal))
+        {
+            return ("esp32c3", "The ESP32-C3 ROM bootloader identified this chip.");
+        }
+
+        if (chip.StartsWith("ESP32C6", StringComparison.Ordinal))
+        {
+            return ("esp32c6", "The ESP32-C6 ROM bootloader identified this chip.");
+        }
+
+        if (chip == "ESP32" ||
+            chip.StartsWith("ESP32D0WD", StringComparison.Ordinal) ||
+            chip.StartsWith("ESP32PICO", StringComparison.Ordinal) ||
+            chip.StartsWith("ESP32U4WD", StringComparison.Ordinal))
+        {
+            return ("esp32dev", "The ESP32 ROM bootloader identified a classic ESP32 chip.");
+        }
+
+        return (null, $"No bundled PlatformIO environment supports detected chip '{chipName}'.");
+    }
+
     public static (string? Environment, string Explanation) Recommend(JsonObject? device)
     {
         if (device is null)

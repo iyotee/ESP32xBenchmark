@@ -49,16 +49,22 @@ fails if the embedded files are absent or do not extract byte-for-byte.
 
 ## Hardware workflow
 
-- **COM ports and identity:** Ports are discovered through `System.IO.Ports`.
-  Identify listens for the firmware's JSON `run_start` device metadata. This
-  identifies the supported SoC/family when benchmark firmware is running.
-  Opening a port may reset the board. USB bridge hardware IDs alone are not
-  considered a reliable board model.
+- **COM ports and identity:** Ports are enumerated through Windows SetupAPI
+  device classes, matching PySerial's Windows discovery, and combined with
+  `System.IO.Ports` results. The list refreshes automatically while the app is
+  open; use **Refresh** to query immediately. If Windows reports no port,
+  reconnect a data-capable USB cable and check Device Manager for the board's
+  USB-serial driver.
+  Existing benchmark firmware provides its target metadata directly; otherwise
+  the ROM probe identifies the silicon even when the carrier uses a generic
+  CH340/CP210x/FTDI USB bridge.
 - **Environment selection:** Known SoCs map to the corresponding existing
-  PlatformIO environment. Firmware metadata cannot distinguish every carrier
-  board variant (for example, generic ESP32-C3 versus a C3 Super Mini), so the
-  environment remains editable and is never silently forced for an unknown
-  target.
+  PlatformIO environment. On a new connection, the app first checks for
+  benchmark firmware identity; if none is available, it makes a read-only
+  `esptool` ROM chip-ID probe and selects the matching SoC environment. The
+  probe briefly resets the board but does not write flash. Carrier-board
+  variants that use the same SoC can still have different USB/serial wiring;
+  the target remains manually overridable for those cases.
 - **Build and upload:** Build invokes `pio run -e <environment>`. Upload invokes
   `pio run -e <environment> -t upload --upload-port <selected COM port>`.
   Upload always uses the explicit COM port selected in the app. PlatformIO Core,
@@ -68,6 +74,11 @@ fails if the embedded files are absent or do not extract byte-for-byte.
 - **Capture:** Capture consumes the existing line-delimited JSON protocol and
   aggregates the requested number of complete runs with the same median,
   min/max, run-variation and stability behavior as the Python collector.
+- **Advanced settings:** Reference profile, serial rate, run count, timeout,
+  external PlatformIO project, build-only, and capture-without-upload controls
+  are grouped under the collapsed **Advanced settings** expander. The default
+  workflow keeps only port/target selection, upload-and-capture, and firmware
+  identification visible.
 - **Serial console:** The console supports live receive and line sends. Close it
   before identify, build, upload, or capture because only one process can own a
   COM port at a time.
@@ -76,17 +87,45 @@ If no COM port is listed, connect the board, install its USB-serial driver if
 needed, and refresh. Unsupported firmware identity and COM-in-use errors are
 shown directly. Capture timeouts report the number of complete runs received.
 
+## Appearance and language
+
+- The interface offers **System**, **Dark**, and **Light** themes; System is the
+  first-launch default. Theme colors are monochrome and follow Windows when
+  System is selected. A single animated header icon cycles System (monitor),
+  Light (sun), and Dark (moon). Rounded input and drop-down templates use the
+  same theme-aware foreground, background, hover, and selection colors.
+  Theme and language choices are stored in
+  `%LOCALAPPDATA%\ESP32xBenchmark\preferences.json`.
+- The language selector lists .NET regional cultures and can follow the Windows
+  UI language automatically. English and French catalogs are currently
+  translated; other cultures are listed with an explicit English-fallback
+  marker. This provides culture-aware number/date formatting and RTL layout
+  where applicable, but does not mean every listed culture has translated
+  interface text yet.
+- Page changes use a brief fade/slide transition and respect the Windows
+  client-area animation setting. Double-clicking a history row reopens that
+  saved result on the benchmark page; single-click selection remains available
+  for comparison, calibration, and deletion.
+
 ## Scores, history, and reports
 
 - History and imported profiles live under
   `%LOCALAPPDATA%\ESP32xBenchmark\history` and
   `%LOCALAPPDATA%\ESP32xBenchmark\profiles`. Each saved run is tagged by
   target, comparability class, and selected reference profile.
+- The measured ESP32 classic reference profile is bundled with the app and
+  installed on first launch without overwriting local profiles. It remains the
+  fixed default anchor for every board, so cross-class scores stay on one scale.
 - Results and comparisons are exported as JSON, CSV, and HTML under
   `%LOCALAPPDATA%\ESP32xBenchmark\artifacts`.
-- Scoring follows the existing weighted categories, higher/lower metric
-  directions, the 25% stability cutoff, reference class check, uncapped
-  reference index, and coverage calculation.
+- Scoring uses the existing weighted categories, higher/lower metric
+  directions, the 25% stability cutoff, and coverage calculation. The ESP32
+  classic reference is anchored at 20/100; metric points scale linearly from
+  that reference and are capped at 100. Other board classes use matching
+  metrics and units against the same anchor and are labeled cross-class.
+  Category coverage is the share of total category weights represented by
+  stable, matching measurements; omitted categories do not contribute to the
+  score. It helps show when a score is based on only part of the benchmark.
 - Cross-board comparison calls the C# port of the shared-reference semantics:
   one reference is applied to the stable metric intersection present in every
   selected board result. It does not imply unsupported categories are
@@ -110,3 +149,17 @@ unchanged tests under `tests/`.
 
 Physical upload/capture still requires a supported board and its USB driver;
 unit tests validate protocol and scoring but do not simulate hardware.
+
+## Portable releases and updates
+
+- Stable Windows releases use tags in `VYYYY.MM.DD.N` form, for example
+  `V2026.11.16.1`. Pushing a tag runs the Windows test/publish workflow and
+  attaches the self-contained `ESP32xBenchmark-win-x64.exe` to a GitHub Release.
+- The release workflow publishes `latest.json` on `main` with the newest
+  release tag and the executable's SHA-256 digest. The app checks that public
+  GitHub-hosted manifest every 10 seconds using conditional HTTP requests; no
+  private key or user token is required.
+- A newer binary is downloaded to the per-user update cache and its digest is
+  verified before a separate helper waits for the app to close, replaces the
+  portable EXE, and restarts it. The target folder must be writable by the
+  current Windows user for automatic replacement to succeed.
